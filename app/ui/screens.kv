@@ -12,7 +12,7 @@
     font_name: 'Roboto'
     background_color: color_primary_green
     color: color_primary_blue
-    font_size: '35sp'
+    font_size: '80sp'
     bold: True
     background_normal: ''
 
@@ -40,14 +40,10 @@
             opacity: 0.15
         Image:
             source: 'assets/images/ibp_logo.png'
-            size_hint: 0.7, 0.7
+            size_hint: 0.55, 0.55
             pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-        BrandedLabel:
-            text: 'BRAND CHALLENGE'
-            font_size: '50sp'
-            pos_hint: {'center_x': 0.5, 'center_y': 0.85}
         BrandedButton:
-            text: 'TOUCH TO START'
+            text: 'Toque para começar'
             size_hint: 0.8, 0.15
             pos_hint: {'center_x': 0.5, 'center_y': 0.15}
             on_press: app.game_manager.show_instructions()
@@ -84,19 +80,20 @@
         Rectangle:
             pos: self.pos
             size: self.size
-    BoxLayout:
-        orientation: 'vertical'
-        padding: 50
-        spacing: 20
-        BrandedLabel:
-            id: countdown_label
-            text: 'Get Ready!'
-            font_size: '120sp'
-            bold: True
-            size_hint_y: 0.8
-            color: color_white
+    
+    FloatLayout:
+        # Subtle branding watermark in the background
+        Image:
+            source: 'assets/images/ibp_logo.png'
+            opacity: 0.1
+            size_hint: 0.5, 0.5
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        # Top bar for score and round info
         BoxLayout:
-            size_hint_y: 0.2
+            pos_hint: {'top': 1}
+            size_hint_y: 0.1
+            padding: (dp(20), 0)
             BrandedLabel:
                 id: round_label
                 text: 'Round: 0 / 5'
@@ -107,6 +104,26 @@
                 text: 'Score: 0'
                 font_size: '30sp'
                 color: color_white
+
+        # Main countdown/feedback label, centered
+        BrandedLabel:
+            id: countdown_label
+            text: 'Prepare-se!'
+            font_size: '150sp'
+            bold: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            color: color_white
+            # Add scale property for animation
+            scale: 1.0
+
+        # Reinforcing instruction label, initially hidden
+        BrandedLabel:
+            id: instruction_label
+            text: ''
+            font_size: '28sp'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.25}
+            color: color_primary_green
+            opacity: 0
 
 <QuizGameScreen>:
     name: 'quiz_game'

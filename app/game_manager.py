@@ -1,6 +1,7 @@
 import random
 import time
 from kivy.clock import Clock
+from kivy.animation import Animation
 from kivy.uix.screenmanager import ScreenManager
 from app.hardware_io import HardwareController
 from app.data_manager import DataManager
@@ -42,37 +43,53 @@ class GameManager:
         self.start_countdown()
 
     def start_countdown(self, dt=None):
-        """Handles the 3, 2, 1 countdown on the screen."""
+        """Handles the 3, 2, 1 countdown and triggers GO animation."""
         screen = self.sm.get_screen('agility_game')
+        screen.ids.countdown_label.text = 'Prepare-se!' # Set initial text in PT-BR
+        screen.ids.countdown_label.scale = 1.0 # Reset scale
+        screen.ids.instruction_label.opacity = 0 # Ensure instruction is hidden
         countdown_val = 3
         
         def update_countdown(dt):
             nonlocal countdown_val
             if countdown_val > 0:
                 screen.ids.countdown_label.text = str(countdown_val)
+                self.am.play('start') # Play sound on each count
                 countdown_val -= 1
             else:
-                screen.ids.countdown_label.text = 'GO!'
+                screen.ids.countdown_label.text = 'VAI!'
+                self.am.play('submit') # Use a different sound for GO
+
+                # --- Punch-out Animation for "GO!" ---
+                anim = (Animation(scale=1.5, d=0.1) +
+                        Animation(scale=1.0, d=0.2, t='out_back'))
+                anim.start(screen.ids.countdown_label)
+
+                # --- Fade-in the reinforcing instruction ---
+                screen.ids.instruction_label.text = 'APERTE O BOTÃO ACESO!'
+                Animation(opacity=1, d=0.3).start(screen.ids.instruction_label)
+
                 Clock.schedule_once(self.start_agility_round, 0.5)
-                return False
+                return False # Stop the scheduled interval
         
-        Clock.schedule_interval(update_countdown, 1)
+        # Start countdown after a brief pause
+        Clock.schedule_once(lambda dt: Clock.schedule_interval(update_countdown, 1), 1.0)
 
     def start_agility_round(self, dt=None):
         """Starts a single round of the agility game."""
-        # --- THIS IS THE NEW LOGIC ---
-        # First, check if the agility section is over.
         if self.current_agility_round >= self.total_agility_rounds:
             self.end_agility_section()
             return
-        # --- END OF NEW LOGIC ---
 
         self.current_agility_round += 1
 
         screen = self.sm.get_screen('agility_game')
-        screen.ids.round_label.text = f'Round: {self.current_agility_round} / {self.total_agility_rounds}'
-        screen.ids.score_label.text = f'Score: {self.score}'
+        screen.ids.round_label.text = f'Rodada: {self.current_agility_round} / {self.total_agility_rounds}'
+        screen.ids.score_label.text = f'Pontos: {self.score}'
+        
+        # --- Hide the "GO!" text and instruction for the round ---
         screen.ids.countdown_label.text = ''
+        screen.ids.instruction_label.opacity = 0
 
         self.target_led_index = random.randint(0, len(self.hw.leds) - 1)
         self.hw.turn_on_led(self.target_led_index)
