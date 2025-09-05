@@ -1,0 +1,47 @@
+# app/ui/screens.kv
+
+<WelcomeScreen>:
+    name: 'welcome'
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Welcome Screen'
+            font_size: '40sp'
+        Button:
+            text: 'Go to Instructions (DEBUG)'
+            on_press: app.game_manager.show_instructions()
+
+<InstructionsScreen>:
+    name: 'instructions'
+    Label:
+        text: 'Instructions Screen'
+        font_size: '40sp'
+
+<AgilityGameScreen>:
+    name: 'agility_game'
+    Label:
+        text: 'Agility Game Screen'
+        font_size: '40sp'
+
+<QuizGameScreen>:
+    name: 'quiz_game'
+    Label:
+        text: 'Quiz Game Screen'
+        font_size: '40sp'
+
+<ScoreScreen>:
+    name: 'score'
+    Label:
+        text: 'Score Screen'
+        font_size: '40sp'
+
+<LeaderboardScreen>:
+    name: 'leaderboard'
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Leaderboard Screen'
+            font_size: '40sp'
+        Button:
+            text: 'Return to Welcome (DEBUG)'
+            on_press: app.game_manager.return_to_welcome()
