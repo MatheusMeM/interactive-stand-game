@@ -9,6 +9,21 @@
       "question": "In which year was our company founded?",
       "options": ["2005", "2010", "2015", "2020"],
       "correct_answer": "2010"
+    },
+    {
+      "question": "What is our flagship product?",
+      "options": ["Product A", "Product B", "Product C", "Product D"],
+      "correct_answer": "Product A"
+    },
+    {
+      "question": "Which color represents our brand?",
+      "options": ["Red", "Blue", "Green", "Yellow"],
+      "correct_answer": "Blue"
+    },
+    {
+      "question": "How many countries do we operate in?",
+      "options": ["5", "10", "15", "20"],
+      "correct_answer": "10"
     }
   ]
 }

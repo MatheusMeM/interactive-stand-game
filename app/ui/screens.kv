@@ -51,9 +51,42 @@
 
 <QuizGameScreen>:
     name: 'quiz_game'
-    Label:
-        text: 'Quiz Game Screen'
-        font_size: '40sp'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 20
+        Label:
+            id: question_label
+            text: 'What is the answer to this question?'
+            font_size: '32sp'
+            size_hint_y: 0.4
+            text_size: self.width, None
+            halign: 'center'
+            valign: 'middle'
+        GridLayout:
+            cols: 2
+            spacing: 15
+            Button:
+                id: option_1
+                text: 'Option A'
+                on_press: app.game_manager.check_answer(self.text)
+            Button:
+                id: option_2
+                text: 'Option B'
+                on_press: app.game_manager.check_answer(self.text)
+            Button:
+                id: option_3
+                text: 'Option C'
+                on_press: app.game_manager.check_answer(self.text)
+            Button:
+                id: option_4
+                text: 'Option D'
+                on_press: app.game_manager.check_answer(self.text)
+        Label:
+            id: feedback_label
+            text: ''
+            font_size: '25sp'
+            size_hint_y: 0.15
 
 <ScoreScreen>:
     name: 'score'
