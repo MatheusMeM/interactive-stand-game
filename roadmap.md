@@ -15,10 +15,10 @@ Here is the master development roadmap for the project. This document outlines t
 
 **Goal:** Establish the project's backbone, configure the development environment, and ensure basic software components are in place. This phase is about building the foundation before the walls.
 
-- [ ] **Directory Scaffolding:** Create the complete project structure (`app/`, `data/`, `assets/`, `config.py`, etc.) as defined in your persona.
-- [ ] **Environment Setup:** Initialize a Python virtual environment (`.venv`) and create a `requirements.txt` file with initial dependencies (`kivy`, `gpiozero`).
-- [ ] **Centralized Configuration:** Populate `config.py` with initial constants, including GPIO pin mappings for all 12 buttons and 12 relays, file paths, and core game timings.
-- [ ] **Kivy "Hello, World":** Implement the simplest possible Kivy app in `__main__.py` that launches a basic window. This validates the Kivy installation and base application structure.
+- [x] **Directory Scaffolding:** Create the complete project structure (`app/`, `data/`, `assets/`, `config.py`, etc.) as defined in your persona.
+- [x] **Environment Setup:** Initialize a Python virtual environment (`.venv`) and create a `requirements.txt` file with initial dependencies (`kivy`, `gpiozero`).
+- [x] **Centralized Configuration:** Populate `config.py` with initial constants, including GPIO pin mappings for all 12 buttons and 12 relays, file paths, and core game timings.
+- [x] **Kivy "Hello, World":** Implement the simplest possible Kivy app in `__main__.py` that launches a basic window. This validates the Kivy installation and base application structure.
 
 ---
 
@@ -26,11 +26,11 @@ Here is the master development roadmap for the project. This document outlines t
 
 **Goal:** Abstract and validate communication with the physical hardware (GPIO) and persistent data (JSON). The objective is to have independent, testable modules before implementing game logic.
 
-- [ ] **Hardware Module (`hardware_io.py`):**
-    - [ ] Implement a `HardwareController` class to manage all GPIO interactions.
-    - [ ] Create high-level, abstract methods: `turn_on_led(index)`, `turn_off_all_leds()`, `get_pressed_button()`.
-    - [ ] Configure all 12 button inputs using non-blocking callbacks (`when_pressed`) that will notify the main application.
-    - [ ] Develop a standalone test script (`test_hardware.py`) to cycle through all LEDs and print console feedback upon each button press.
+- [x] **Hardware Module (`hardware_io.py`):**
+    - [x] Implement a `HardwareController` class to manage all GPIO interactions.
+    - [x] Create high-level, abstract methods: `turn_on_led(index)`, `turn_off_all_leds()`, `get_pressed_button()`.
+    - [x] Configure all 12 button inputs using non-blocking callbacks (`when_pressed`) that will notify the main application.
+    - [x] Develop a standalone test script (`test_hardware.py`) to cycle through all LEDs and print console feedback upon each button press.
 
 - [x] **Data Module (`data_manager.py`):**
     - [x] Implement a `DataManager` class.
@@ -43,10 +43,10 @@ Here is the master development roadmap for the project. This document outlines t
 
 **Goal:** Construct the UI navigation framework and the central logic engine (FSM) that controls the application flow. At this stage, screens will be placeholders, but navigation between them will be functional.
 
-- [ ] **Kivy ScreenManager:** Configure the main `ScreenManager` in the Kivy app to handle all distinct game screens.
-- [ ] **Screen Placeholders:** Create the Python classes and basic `.kv` layout files for all primary screens: `WelcomeScreen`, `InstructionsScreen`, `AgilityGameScreen`, `QuizGameScreen`, `ScoreScreen`, and `LeaderboardScreen`.
-- [ ] **Finite State Machine (`game_manager.py`):**
-    - [ ] Implement the `GameManager` class, which will serve as the application's central brain.
+- [x] **Kivy ScreenManager:** Configure the main `ScreenManager` in the Kivy app to handle all distinct game screens.
+- [x] **Screen Placeholders:** Create the Python classes and basic `.kv` layout files for all primary screens: `WelcomeScreen`, `InstructionsScreen`, `AgilityGameScreen`, `QuizGameScreen`, `ScoreScreen`, and `LeaderboardScreen`.
+- [x] **Finite State Machine (`game_manager.py`):**
+    - [x] Implement the `GameManager` class, which will serve as the application's central brain.
     - [ ] Define all game states (e.g., `IDLE`, `INSTRUCTIONS`, `PLAYING_AGILITY`, `SHOWING_LEADERBOARD`).
     - [ ] Create methods to transition between states (e.g., `start_game()`, `end_round()`), which will instruct the `ScreenManager` to change the visible screen.
 
