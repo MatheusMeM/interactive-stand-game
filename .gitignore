@@ -1,0 +1,18 @@
+# Python virtual environment
+.venv/
+venv/
+ENV/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Kivy specific
+.kivy/
+*.kv~
+
+# Editor/IDE specific
+.vscode/
+.idea/
