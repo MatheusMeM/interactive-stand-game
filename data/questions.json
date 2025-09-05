@@ -1,0 +1,14 @@
+{
+  "questions": [
+    {
+      "question": "What is our brand's main slogan?",
+      "options": ["Slogan A", "Slogan B", "Slogan C", "Slogan D"],
+      "correct_answer": "Slogan B"
+    },
+    {
+      "question": "In which year was our company founded?",
+      "options": ["2005", "2010", "2015", "2020"],
+      "correct_answer": "2010"
+    }
+  ]
+}
