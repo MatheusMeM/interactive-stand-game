@@ -7,6 +7,14 @@ import os
 os.environ['SDL_AUDIODRIVER'] = 'alsa'
 # --- END OF FIX ---
 
+# --- NEW: WINDOW CONFIGURATION ---
+# This must be done BEFORE other kivy modules are imported.
+from kivy.config import Config
+Config.set('graphics', 'fullscreen', 'auto') # Use 'auto' for best compatibility.
+Config.set('graphics', 'rotation', 90)      # Sets orientation to vertical.
+Config.set('graphics', 'borderless', 1)       # Hides the window bar for a kiosk look.
+# --- END OF NEW CONFIGURATION ---
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager

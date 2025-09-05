@@ -35,14 +35,23 @@
     - [x] Save the final score and player name using the `DataManager`.
     - [x] Display and highlight the player's score on the `LeaderboardScreen`.
 
-### Phase 4: Integration, Polish & Feedback - The Soul of the Game
-- [ ] **Full Loop Integration:** Connect game states to create the final flow.
-- [ ] **Sensory Feedback:** Integrate sound effects for key events.
-- [ ] **UI Polish:** Implement smooth screen transitions and animations.
-- [ ] **Attract Mode:** Implement the idle state loop on the `WelcomeScreen`.
+### Phase 4: UI/UX Overhaul & Polishing
+- [ ] **Foundational UI Setup:**
+    - [ ] Configure the application to run in **Fullscreen Mode**.
+    - [ ] Set and lock the screen orientation to **Vertical**.
+- [ ] **Brand Integration & UI Redesign:**
+    - [ ] Integrate brand assets (logo, graphics) into the `assets/images` folder.
+    - [ ] Redesign all screens in `screens.kv` using the IBP brand guide (colors, shapes, and recommended fonts).
+    - [ ] Replace the standard `TextInput` on the `ScoreScreen` with a **built-in Kivy Virtual Keyboard**.
+- [ ] **Experience Refinement:**
+    - [x] **Sensory Feedback:** Integrate sound effects for key events.
+    - [ ] **UI Polish:** Implement smooth, non-disruptive screen transitions (e.g., `FadeTransition`).
+    - [ ] **Attract Mode:** Implement an idle state loop on the `WelcomeScreen` that alternates with the Leaderboard and triggers an engaging LED light pattern.
+- [ ] **Final Loop Integration & Testing:**
+    - [ ] Conduct a full review of the game loop, testing for consistency and minor bugs.
 
 ### Phase 5: Deployment & Stress Testing - Stage Ready
 - [ ] **Autostart Service:** Create a `systemd` service file.
-- [ ] **Kiosk Mode Configuration:** Configure the OS for full-screen mode.
-- [ ] **Stress Testing:** Run the application for an extended period.
+- [ ] **Kiosk Mode Configuration:** Ensure the OS is locked down for public use.
+- [ ] **Stress Testing:** Run the application for an extended period to check for stability.
 - [ ] **Operational Runbook:** Create a simple guide for on-site staff.
