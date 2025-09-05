@@ -5,23 +5,49 @@
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: 'Welcome Screen'
-            font_size: '40sp'
+            text: '[b]BRAND CHALLENGE[/b]' # Example Title
+            font_size: '60sp'
+            markup: True # Allows for bold tags
         Button:
-            text: 'Go to Instructions (DEBUG)'
-            on_press: app.game_manager.show_instructions()
+            text: 'TOUCH TO START'
+            font_size: '50sp'
+            background_color: 0, 0.6, 0.2, 1 # A nice green color
+            on_press: app.game_manager.show_instructions() # This will now work
 
 <InstructionsScreen>:
     name: 'instructions'
-    Label:
-        text: 'Instructions Screen'
-        font_size: '40sp'
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Press the illuminated button as fast as you can!'
+            font_size: '32sp'
+            halign: 'center'
+        Button:
+            text: 'START GAME'
+            font_size: '50sp'
+            on_press: app.game_manager.start_game()
 
 <AgilityGameScreen>:
     name: 'agility_game'
-    Label:
-        text: 'Agility Game Screen'
-        font_size: '40sp'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 20
+        Label:
+            id: countdown_label
+            text: 'Get Ready!'
+            font_size: '80sp'
+            size_hint_y: 0.8
+        BoxLayout:
+            size_hint_y: 0.2
+            Label:
+                id: round_label
+                text: 'Round: 0 / 5'
+                font_size: '30sp'
+            Label:
+                id: score_label
+                text: 'Score: 0'
+                font_size: '30sp'
 
 <QuizGameScreen>:
     name: 'quiz_game'
@@ -45,3 +71,6 @@
         Button:
             text: 'Return to Welcome (DEBUG)'
             on_press: app.game_manager.return_to_welcome()
+</content>
+</file>
+</files>

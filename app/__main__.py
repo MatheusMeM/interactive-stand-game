@@ -26,5 +26,10 @@ class GameApp(App):
         
         return sm
 
+    def on_stop(self):
+        """This method is called when the application is closed."""
+        print("Application is closing. Cleaning up resources.")
+        self.game_manager.cleanup()
+
 if __name__ == '__main__':
     GameApp().run()
