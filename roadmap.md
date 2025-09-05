@@ -27,9 +27,9 @@
     - [x] Implement the countdown on the `AgilityGameScreen`.
     - [x] Develop the logic for random LED activation and high-precision timing.
     - [x] Integrate the button press callback to calculate score and advance rounds.
-- [ ] **Quiz Game Logic:**
-    - [ ] On the `QuizGameScreen`, use the `DataManager` to fetch and display a question.
-    - [ ] Implement the logic to check user answers and update the score.
+- [x] **Quiz Game Logic:**
+    - [x] On the `QuizGameScreen`, use the `DataManager` to fetch and display a question.
+    - [x] Implement the logic to check user answers and update the score.
 - [ ] **Scoring & Leaderboard Logic:**
     - [ ] On the `ScoreScreen`, implement the Kivy virtual keyboard.
     - [ ] Save the final score and player name using the `DataManager`.
