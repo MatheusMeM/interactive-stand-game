@@ -1,3 +1,12 @@
+import os
+
+# --- CRITICAL FIX FOR RASPBERRY PI AUDIO HANG ---
+# This must be set BEFORE any kivy modules are imported.
+# It forces Kivy's underlying SDL2 library to use the ALSA audio driver,
+# preventing an auto-detection hang.
+os.environ['SDL_AUDIODRIVER'] = 'alsa'
+# --- END OF FIX ---
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager

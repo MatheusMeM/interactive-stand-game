@@ -4,6 +4,7 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager
 from app.hardware_io import HardwareController
 from app.data_manager import DataManager
+from app.audio_manager import AudioManager
 import datetime
 
 class GameManager:
@@ -11,6 +12,7 @@ class GameManager:
         self.sm = screen_manager
         self.hw = HardwareController()
         self.dm = DataManager()
+        self.am = AudioManager()
         self.hw.set_button_callback(self.on_button_press)
 
         self.all_questions = self.dm.load_questions()
@@ -32,6 +34,7 @@ class GameManager:
 
     def start_game(self):
         """Resets game state and starts the countdown for the agility game."""
+        self.am.play('start')
         self.score = 0
         self.current_agility_round = 0
         self.current_quiz_round = 0
@@ -86,8 +89,10 @@ class GameManager:
             reaction_time = time.perf_counter() - self.round_start_time
             points = max(0, 1000 - int(reaction_time * 1000))
             self.score += points
+            self.am.play('correct')
             print(f"Correct! Time: {reaction_time:.3f}s, Score: +{points}")
         else:
+            self.am.play('wrong')
             print(f"Wrong button! Expected {self.target_led_index}, got {pressed_index}.")
 
         # --- THIS IS THE CRITICAL CHANGE ---
@@ -134,9 +139,11 @@ class GameManager:
 
         if selected_answer == correct_answer:
             self.score += 500 # Fixed points for a correct quiz answer
+            self.am.play('correct')
             screen.ids.feedback_label.text = 'Correct!'
             print("Quiz answer: Correct!")
         else:
+            self.am.play('wrong')
             screen.ids.feedback_label.text = f'Wrong! The correct answer was:\n{correct_answer}'
             print("Quiz answer: Incorrect!")
 
@@ -174,6 +181,7 @@ class GameManager:
         # Load existing scores, add new one, and save
         all_scores = self.dm.load_leaderboard()
         all_scores.append(score_entry)
+        self.am.play('submit')
         self.dm.save_leaderboard(all_scores)
         
         # Go to leaderboard
