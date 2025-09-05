@@ -32,10 +32,10 @@ Here is the master development roadmap for the project. This document outlines t
     - [ ] Configure all 12 button inputs using non-blocking callbacks (`when_pressed`) that will notify the main application.
     - [ ] Develop a standalone test script (`test_hardware.py`) to cycle through all LEDs and print console feedback upon each button press.
 
-- [ ] **Data Module (`data_manager.py`):**
-    - [ ] Implement a `DataManager` class.
-    - [ ] Create methods to `load_questions()`, `load_leaderboard()`, and `save_leaderboard(data)`.
-    - [ ] Implement atomic write logic for `save_leaderboard` to prevent JSON file corruption in case of a crash.
+- [x] **Data Module (`data_manager.py`):**
+    - [x] Implement a `DataManager` class.
+    - [x] Create methods to `load_questions()`, `load_leaderboard()`, and `save_leaderboard(data)`.
+    - [x] Implement atomic write logic for `save_leaderboard` to prevent JSON file corruption in case of a crash.
 
 ---
 
