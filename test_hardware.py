@@ -13,7 +13,7 @@ def handle_button_press(button_index):
     print(f"--- Button {button_index} pressed! ---")
     # For a fun test, let's light up the corresponding LED
     controller.turn_on_led(button_index)
-    time.sleep(0.5) # Keep it lit for a moment
+    time.sleep(0.2) # Keep it lit for a moment
     controller.turn_off_led(button_index)
 
 if __name__ == "__main__":
