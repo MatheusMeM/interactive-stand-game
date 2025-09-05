@@ -2,6 +2,12 @@
 
 A high-response interactive game for a brand convention, built with Python/Kivy on a Raspberry Pi 5, integrating a touchscreen UI with 12 physical arcade buttons and LEDs.
 
+## Current Status (As of Agility Game Implementation)
+*   The core application architecture (FSM, HAL, DataManager) is complete.
+*   A fully playable agility game loop is implemented and functional, including instructions, countdown, multiple rounds, and scoring.
+*   Hardware integration with active-low relays and buttons is stable.
+*   Next development steps will focus on the Quiz Game logic and the final scoring/leaderboard screens.
+
 ## 1. Core Premise
 
 The application is a gamified experience designed for high-traffic environments. It consists of two alternating mini-games controlled by a central state machine:
@@ -58,6 +64,7 @@ The system is designed with a strict **Separation of Concerns (SoC)** principle,
     ```bash
     pip install -r requirements.txt
     ```
+    Note: The `lgpio` library is required for `gpiozero` to work properly on Raspberry Pi 5.
 4.  **Run Application:**
     ```bash
     python -m app
