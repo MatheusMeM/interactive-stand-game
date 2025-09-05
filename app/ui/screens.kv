@@ -90,19 +90,54 @@
 
 <ScoreScreen>:
     name: 'score'
-    Label:
-        text: 'Score Screen'
-        font_size: '40sp'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 20
+        Label:
+            text: 'Congratulations!'
+            font_size: '50sp'
+        Label:
+            id: final_score_label
+            text: 'Your Final Score: 0'
+            font_size: '40sp'
+        TextInput:
+            id: name_input
+            hint_text: 'Enter Your Name (3 Chars)'
+            multiline: False
+            font_size: '35sp'
+            size_hint_y: None
+            height: '60dp'
+            on_text: app.game_manager.validate_name_input(self)
+        Button:
+            text: 'Submit Score'
+            font_size: '40sp'
+            on_press: app.game_manager.submit_score(name_input.text)
 
 <LeaderboardScreen>:
     name: 'leaderboard'
     BoxLayout:
         orientation: 'vertical'
+        padding: 20
+        spacing: 10
         Label:
-            text: 'Leaderboard Screen'
-            font_size: '40sp'
+            text: 'Hall of Fame'
+            font_size: '50sp'
+            size_hint_y: 0.2
+        Label:
+            id: congrats_label
+            text: ''
+            font_size: '30sp'
+            size_hint_y: 0.1
+            color: (0, 1, 0, 1)
+        GridLayout:
+            id: leaderboard_grid
+            cols: 3
+            size_hint_y: 0.6
         Button:
-            text: 'Return to Welcome (DEBUG)'
+            text: 'Play Again'
+            font_size: '40sp'
+            size_hint_y: 0.1
             on_press: app.game_manager.return_to_welcome()
 </content>
 </file>

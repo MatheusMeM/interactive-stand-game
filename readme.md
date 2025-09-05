@@ -2,11 +2,10 @@
 
 A high-response interactive game for a brand convention, built with Python/Kivy on a Raspberry Pi 5, integrating a touchscreen UI with 12 physical arcade buttons and LEDs.
 
-## Current Status (As of Quiz Game Implementation)
-*   The core application architecture (FSM, HAL, DataManager) is complete.
-*   A full game loop is functional, transitioning from the Agility Game to the Quiz Game seamlessly.
-*   Hardware integration and data persistence (loading questions) are stable and in use.
-*   Next development step: Implement the final scoring screen with a virtual keyboard for name entry and display the global leaderboard.
+## Current Status (As of Phase 3 Completion)
+*   The application is **feature-complete**. A full player journey from start, through both game modes, to score submission and leaderboard display is implemented and functional.
+*   All core modules (FSM, HAL, DataManager, UI) are integrated and working in concert.
+*   The project is now entering **Phase 4: Polish & Feedback**. The focus will shift to improving the user experience through sound effects, animations, and creating an engaging "attract mode".
 
 ## 1. Core Premise
 

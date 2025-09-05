@@ -1,3 +1,19 @@
 {
-  "scores": []
+    "scores": [
+        {
+            "name": "aaa",
+            "score": 500,
+            "timestamp": "2025-09-05T04:31:20.841440"
+        },
+        {
+            "name": "aab",
+            "score": 0,
+            "timestamp": "2025-09-05T04:31:51.445834"
+        },
+        {
+            "name": "aac",
+            "score": 0,
+            "timestamp": "2025-09-05T04:32:28.604932"
+        }
+    ]
 }

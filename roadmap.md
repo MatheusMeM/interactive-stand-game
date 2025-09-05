@@ -30,10 +30,10 @@
 - [x] **Quiz Game Logic:**
     - [x] On the `QuizGameScreen`, use the `DataManager` to fetch and display a question.
     - [x] Implement the logic to check user answers and update the score.
-- [ ] **Scoring & Leaderboard Logic:**
-    - [ ] On the `ScoreScreen`, implement the Kivy virtual keyboard.
-    - [ ] Save the final score and player name using the `DataManager`.
-    - [ ] Display and highlight the player's score on the `LeaderboardScreen`.
+- [x] **Scoring & Leaderboard Logic:**
+    - [x] On the `ScoreScreen`, implement the Kivy virtual keyboard.
+    - [x] Save the final score and player name using the `DataManager`.
+    - [x] Display and highlight the player's score on the `LeaderboardScreen`.
 
 ### Phase 4: Integration, Polish & Feedback - The Soul of the Game
 - [ ] **Full Loop Integration:** Connect game states to create the final flow.

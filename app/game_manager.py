@@ -4,6 +4,7 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager
 from app.hardware_io import HardwareController
 from app.data_manager import DataManager
+import datetime
 
 class GameManager:
     def __init__(self, screen_manager: ScreenManager):
@@ -142,10 +143,58 @@ class GameManager:
         Clock.schedule_once(self.start_quiz_round, 2.0) # Wait 2 seconds before next question
 
     def end_game(self):
-        """Called after the last quiz round."""
+        """Called after the last quiz round. Transitions to the Score screen."""
         print(f"Game over! Final Score: {self.score}")
-        # Later this will go to the score screen to input name
-        self.return_to_welcome()
+        self.go_to_screen('score')
+        screen = self.sm.get_screen('score')
+        screen.ids.final_score_label.text = f'Your Final Score: {self.score}'
+        screen.ids.name_input.text = '' # Clear input field
+
+    def validate_name_input(self, text_input):
+        """Restricts name input to 3 characters."""
+        if len(text_input.text) > 3:
+            text_input.text = text_input.text[:3]
+            # Move cursor to end
+            text_input.cursor = (3, 0)
+
+    def submit_score(self, player_name):
+        """Validates, saves, and displays the player's score."""
+        if len(player_name) != 3:
+            print("Name must be exactly 3 characters")
+            # In a real app, you'd show an error message on screen
+            return
+        
+        # Add timestamp and save
+        score_entry = {
+            'name': player_name,
+            'score': self.score,
+            'timestamp': datetime.datetime.now().isoformat()
+        }
+        
+        # Load existing scores, add new one, and save
+        all_scores = self.dm.load_leaderboard()
+        all_scores.append(score_entry)
+        self.dm.save_leaderboard(all_scores)
+        
+        # Go to leaderboard
+        self.go_to_screen('leaderboard')
+        self.show_leaderboard(player_name)
+
+    def show_leaderboard(self, player_name=None):
+        """Loads and displays the leaderboard."""
+        scores = self.dm.load_leaderboard()
+        screen = self.sm.get_screen('leaderboard')
+        
+        # Show a congratulations message if the player is in the top 15
+        top_scores = sorted(scores, key=lambda x: x['score'], reverse=True)[:15]
+        is_top_player = any(entry.get('name') == player_name for entry in top_scores)
+        
+        if is_top_player:
+            screen.ids.congrats_label.text = f"Congratulations {player_name}! You're in the Hall of Fame!"
+        else:
+            screen.ids.congrats_label.text = ""
+        
+        screen.update_leaderboard(scores, player_name)
 
     def cleanup(self):
         """Should be called when the app closes."""
@@ -162,4 +211,8 @@ class GameManager:
         self.go_to_screen('instructions')
 
     def return_to_welcome(self):
+        """Returns to the welcome screen and resets the game state."""
+        self.score = 0
+        self.current_agility_round = 0
+        self.current_quiz_round = 0
         self.go_to_screen('welcome')
