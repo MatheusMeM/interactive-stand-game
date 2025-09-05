@@ -17,7 +17,7 @@ Config.set('graphics', 'borderless', 1)       # Hides the window bar for a kiosk
 
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager
+from kivy.uix.screenmanager import ScreenManager, FadeTransition
 
 from app.ui.screens import (WelcomeScreen, InstructionsScreen, AgilityGameScreen,
                             QuizGameScreen, ScoreScreen, LeaderboardScreen)
@@ -31,6 +31,8 @@ class GameApp(App):
 
         # Create the screen manager
         sm = ScreenManager()
+        # Set the transition to FadeTransition for smooth screen changes
+        sm.transition = FadeTransition(duration=0.4)
         sm.add_widget(WelcomeScreen(name='welcome'))
         sm.add_widget(InstructionsScreen(name='instructions'))
         sm.add_widget(AgilityGameScreen(name='agility_game'))
