@@ -1,88 +1,152 @@
 # app/ui/screens.kv
+#:kivy 2.1.0
+
+# Define brand colors for reusability
+#:set color_primary_blue (0/255, 64/255, 119/255, 1)      # #004077
+#:set color_primary_green (134/255, 188/255, 37/255, 1)   # #86BC25
+#:set color_white (1, 1, 1, 1)
+#:set color_dark_gray (137/255, 137/255, 137/255, 1) # rgba(137, 137, 137, 1)
+
+# Base styles for widgets to maintain consistency
+<BrandedButton@Button>:
+    font_name: 'Roboto'
+    background_color: color_primary_green
+    color: color_primary_blue
+    font_size: '35sp'
+    bold: True
+    background_normal: ''
+
+<BrandedLabel@Label>:
+    font_name: 'Roboto'
+    color: color_primary_blue
+    halign: 'center'
+    valign: 'middle'
+
+# --- Screen Designs ---
 
 <WelcomeScreen>:
     name: 'welcome'
-    BoxLayout:
-        orientation: 'vertical'
-        Label:
-            text: '[b]BRAND CHALLENGE[/b]' # Example Title
-            font_size: '60sp'
-            markup: True # Allows for bold tags
-        Button:
-            text: 'TOUCH TO START'
+    canvas.before:
+        Color:
+            rgba: color_white
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    FloatLayout:
+        Image:
+            source: 'assets/images/background_graphic.png'
+            allow_stretch: True
+            keep_ratio: False
+            opacity: 0.15
+        Image:
+            source: 'assets/images/ibp_logo.png'
+            size_hint: 0.7, 0.7
+            pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+        BrandedLabel:
+            text: 'BRAND CHALLENGE'
             font_size: '50sp'
-            background_color: 0, 0.6, 0.2, 1 # A nice green color
-            on_press: app.game_manager.show_instructions() # This will now work
+            pos_hint: {'center_x': 0.5, 'center_y': 0.85}
+        BrandedButton:
+            text: 'TOUCH TO START'
+            size_hint: 0.8, 0.15
+            pos_hint: {'center_x': 0.5, 'center_y': 0.15}
+            on_press: app.game_manager.show_instructions()
 
 <InstructionsScreen>:
     name: 'instructions'
+    canvas.before:
+        Color:
+            rgba: color_white
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Image:
+        source: 'assets/images/background_graphic.png'
+        allow_stretch: True
+        keep_ratio: False
+        opacity: 0.15
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            text: 'Press the illuminated button as fast as you can!'
-            font_size: '32sp'
-            halign: 'center'
-        Button:
+        padding: 50
+        spacing: 30
+        BrandedLabel:
+            text: 'Get Ready!\n\nPress the illuminated button as fast as you can.\n\nThen, test your knowledge in the quiz!'
+            font_size: '30sp'
+        BrandedButton:
             text: 'START GAME'
-            font_size: '50sp'
             on_press: app.game_manager.start_game()
 
 <AgilityGameScreen>:
     name: 'agility_game'
+    canvas.before:
+        Color:
+            rgba: color_dark_gray
+        Rectangle:
+            pos: self.pos
+            size: self.size
     BoxLayout:
         orientation: 'vertical'
         padding: 50
         spacing: 20
-        Label:
+        BrandedLabel:
             id: countdown_label
             text: 'Get Ready!'
-            font_size: '80sp'
+            font_size: '120sp'
+            bold: True
             size_hint_y: 0.8
+            color: color_white
         BoxLayout:
             size_hint_y: 0.2
-            Label:
+            BrandedLabel:
                 id: round_label
                 text: 'Round: 0 / 5'
                 font_size: '30sp'
-            Label:
+                color: color_white
+            BrandedLabel:
                 id: score_label
                 text: 'Score: 0'
                 font_size: '30sp'
+                color: color_white
 
 <QuizGameScreen>:
     name: 'quiz_game'
+    canvas.before:
+        Color:
+            rgba: color_white
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Image:
+        source: 'assets/images/background_graphic.png'
+        allow_stretch: True
+        keep_ratio: False
+        opacity: 0.15
     BoxLayout:
         orientation: 'vertical'
         padding: 50
         spacing: 20
-        Label:
+        BrandedLabel:
             id: question_label
-            text: 'What is the answer to this question?'
-            font_size: '32sp'
+            text: '...'
+            font_size: '30sp'
             size_hint_y: 0.4
             text_size: self.width, None
-            halign: 'center'
-            valign: 'middle'
         GridLayout:
             cols: 2
             spacing: 15
-            Button:
+            BrandedButton:
                 id: option_1
-                text: 'Option A'
                 on_press: app.game_manager.check_answer(self.text)
-            Button:
+            BrandedButton:
                 id: option_2
-                text: 'Option B'
                 on_press: app.game_manager.check_answer(self.text)
-            Button:
+            BrandedButton:
                 id: option_3
-                text: 'Option C'
                 on_press: app.game_manager.check_answer(self.text)
-            Button:
+            BrandedButton:
                 id: option_4
-                text: 'Option D'
                 on_press: app.game_manager.check_answer(self.text)
-        Label:
+        BrandedLabel:
             id: feedback_label
             text: ''
             font_size: '25sp'
@@ -90,55 +154,77 @@
 
 <ScoreScreen>:
     name: 'score'
+    canvas.before:
+        Color:
+            rgba: color_white
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Image:
+        source: 'assets/images/background_graphic.png'
+        allow_stretch: True
+        keep_ratio: False
+        opacity: 0.15
     BoxLayout:
         orientation: 'vertical'
         padding: 50
         spacing: 20
-        Label:
+        BrandedLabel:
             text: 'Congratulations!'
             font_size: '50sp'
-        Label:
+        BrandedLabel:
             id: final_score_label
             text: 'Your Final Score: 0'
             font_size: '40sp'
         TextInput:
             id: name_input
-            hint_text: 'Enter Your Name (3 Chars)'
-            multiline: False
+            hint_text: 'ENTER YOUR INITIALS'
+            font_name: 'Roboto'
             font_size: '35sp'
+            multiline: False
+            readonly: True
+            halign: 'center'
             size_hint_y: None
             height: '60dp'
-            on_text: app.game_manager.validate_name_input(self)
-        Button:
+        BrandedButton:
             text: 'Submit Score'
-            font_size: '40sp'
             on_press: app.game_manager.submit_score(name_input.text)
+        VKeyboard:
+            target: name_input
+            layout: 'qwerty'
 
 <LeaderboardScreen>:
     name: 'leaderboard'
+    canvas.before:
+        Color:
+            rgba: color_white
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Image:
+        source: 'assets/images/background_graphic.png'
+        allow_stretch: True
+        keep_ratio: False
+        opacity: 0.15
     BoxLayout:
         orientation: 'vertical'
         padding: 20
         spacing: 10
-        Label:
+        BrandedLabel:
             text: 'Hall of Fame'
             font_size: '50sp'
             size_hint_y: 0.2
-        Label:
+        BrandedLabel:
             id: congrats_label
             text: ''
             font_size: '30sp'
             size_hint_y: 0.1
-            color: (0, 1, 0, 1)
+            color: color_primary_green
         GridLayout:
             id: leaderboard_grid
             cols: 3
             size_hint_y: 0.6
-        Button:
+        BrandedButton:
             text: 'Play Again'
-            font_size: '40sp'
             size_hint_y: 0.1
             on_press: app.game_manager.return_to_welcome()
-</content>
-</file>
-</files>

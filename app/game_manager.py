@@ -156,21 +156,16 @@ class GameManager:
         screen = self.sm.get_screen('score')
         screen.ids.final_score_label.text = f'Your Final Score: {self.score}'
         screen.ids.name_input.text = '' # Clear input field
-
-    def validate_name_input(self, text_input):
-        """Restricts name input to 3 characters."""
-        if len(text_input.text) > 3:
-            text_input.text = text_input.text[:3]
-            # Move cursor to end
-            text_input.cursor = (3, 0)
+        screen.ids.name_input.focus = True # Focus the TextInput for the VKeyboard
 
     def submit_score(self, player_name):
-        """Validates, saves, and displays the player's score."""
-        if len(player_name) != 3:
-            print("Name must be exactly 3 characters")
-            # In a real app, you'd show an error message on screen
+        """Saves the score and transitions to the leaderboard."""
+        player_name = player_name.strip().upper()
+        if not player_name:
+            print("Player name is empty, not saving score.")
+            # Optional: Add on-screen feedback here
             return
-        
+
         # Add timestamp and save
         score_entry = {
             'name': player_name,
