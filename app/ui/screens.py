@@ -131,10 +131,10 @@ class LeaderboardScreen(Screen):
         # Sort scores descending
         sorted_scores = sorted(scores, key=lambda x: x['score'], reverse=True)
         
-        # Add header with professional styling
+        # Add header with professional styling - ALL IN PORTUGUESE
         header_color = (0/255, 64/255, 119/255, 1)  # color_primary_blue
         grid.add_widget(Label(
-            text='RANK',
+            text='POSIÇÃO',
             bold=True,
             font_size='32sp',
             color=header_color,
@@ -148,7 +148,7 @@ class LeaderboardScreen(Screen):
             font_name='Roboto'
         ))
         grid.add_widget(Label(
-            text='PONTOS',
+            text='PONTUAÇÃO',
             bold=True,
             font_size='32sp',
             color=header_color,

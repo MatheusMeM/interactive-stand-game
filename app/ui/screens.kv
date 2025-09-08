@@ -34,9 +34,13 @@
     font_name: 'Roboto'
     background_color: 0,0,0,0 # Make the default background transparent
     color: color_primary_blue
-    font_size: '70sp'
+    font_size: '28sp'  # Reduced from 70sp to accommodate longer text
     bold: True
     background_normal: ''
+    text_size: self.size  # Enable text wrapping within button bounds
+    halign: 'center'     # Center text horizontally
+    valign: 'middle'     # Center text vertically
+    padding: [dp(15), dp(10)]  # Internal padding for better text layout
 
     canvas.before:
         Color:
@@ -273,10 +277,10 @@
         padding: screen_padding
         spacing: dp(25)
 
-        # --- Question Dialog Box (40% of vertical space) ---
+        # --- Question Dialog Box (35% of vertical space) ---
         BoxLayout:
-            size_hint_y: 0.4
-            padding: dp(30)
+            size_hint_y: 0.35
+            padding: dp(25)
             canvas.before:
                 Color:
                     rgba: color_light_gray
@@ -287,16 +291,18 @@
             BrandedLabel:
                 id: question_label
                 text: 'A carregar pergunta...'
-                font_size: '32sp'
+                font_size: '36sp'  # Slightly smaller for better fit
                 # Allow text to wrap within the available width
                 text_size: self.width, None
+                halign: 'center'
+                valign: 'middle'
 
-        # --- 2x2 Answer Grid (60% of vertical space) ---
+        # --- 2x2 Answer Grid (65% of vertical space) ---
         GridLayout:
             id: answers_grid
             cols: 2
             spacing: dp(15)
-            size_hint_y: 0.6
+            size_hint_y: 0.65
             
             # Note: on_press now passes the button widget itself (self).
             # This is more powerful as it gives the logic full context.
@@ -404,7 +410,7 @@
                             font_name: 'Roboto'
                             font_size: '40sp'
                             multiline: False
-                            readonly: False
+                            readonly: True
                             halign: 'center'
                             size_hint_y: None
                             height: dp(70)
@@ -413,8 +419,8 @@
                             cursor_color: color_primary_blue
                             selection_color: color_primary_green
                             padding: [dp(20), dp(15)]
-                            on_text_validate: app.game_manager.submit_score(self.text)
-                            # Remove virtual_keyboard reference as our custom keyboard doesn't need a target
+                            # READONLY: True prevents physical keyboard input and duplications
+                            # All input controlled via virtual keyboard only
 
         # --- SUBMIT BUTTON (15% of vertical space) ---
         BoxLayout:
@@ -627,7 +633,7 @@
         
         # Título principal
         BrandedLabel:
-            text: 'Hall of Fame'
+            text: 'Ranking'
             font_size: '70sp'
             bold: True
             size_hint_y: 0.15

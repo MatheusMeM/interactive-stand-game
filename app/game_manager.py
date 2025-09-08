@@ -37,6 +37,11 @@ class GameManager:
         self.quiz_in_progress = False
         self.instruction_state = None # <-- NEW state variable
         self.countdown_active = False  # Guard flag to prevent multiple countdowns
+        
+        # Virtual keyboard state management
+        self.virtual_keyboard_text = ""  # Internal text state
+        self.last_key_press_time = 0
+        self.key_press_cooldown = 0.15  # 150ms between key presses
 
         print("GameManager initialized with HardwareController and DataManager.")
 
@@ -286,13 +291,17 @@ class GameManager:
         screen.ids.name_input.text = '' # Clear input field
         screen.ids.name_input.focus = True # Focus the TextInput for the VKeyboard
         
+        # Initialize virtual keyboard state
+        self.virtual_keyboard_text = ""
+        print("DEBUG: Virtual keyboard state initialized")
+        
         # Bind text validation to limit input length
         screen.ids.name_input.bind(text=self._validate_name_input)
 
     def _validate_name_input(self, instance, text):
-        """Validates and limits the name input to reasonable length for initials."""
-        # Limit to 8 characters maximum for initials
-        max_length = 8
+        """Validates and limits the name input to reasonable length."""
+        # Limit to 30 characters maximum (updated from 8)
+        max_length = 30
         if len(text) > max_length:
             instance.text = text[:max_length]
         
@@ -301,25 +310,53 @@ class GameManager:
             instance.text = text.upper()
 
     def virtual_key_press(self, key_value):
-        """Handles virtual keyboard key presses with proper functionality."""
+        """Handles virtual keyboard with state comparison to prevent duplicates."""
         if self.sm.current != 'score':
             return
-            
-        screen = self.sm.get_screen('score')
-        name_input = screen.ids.name_input
+        
+        # Time-based debounce protection
+        current_time = time.perf_counter()
+        if current_time - self.last_key_press_time < self.key_press_cooldown:
+            print(f"DEBUG: Key '{key_value}' ignored due to debounce")
+            return
+        
+        self.last_key_press_time = current_time
+        
+        # Calculate what the new text should be
+        current_internal_text = self.virtual_keyboard_text
+        expected_new_text = current_internal_text
+        
+        print(f"DEBUG: Key '{key_value}' - Current internal: '{current_internal_text}'")
         
         if key_value == 'BACKSPACE':
-            # Remove last character
-            name_input.do_backspace()
+            if len(current_internal_text) > 0:
+                expected_new_text = current_internal_text[:-1]
+            print(f"DEBUG: BACKSPACE - Expected: '{expected_new_text}'")
         elif key_value == 'SPACE':
-            # Add space character
-            name_input.insert_text(' ')
+            expected_new_text = current_internal_text + ' '
+            print(f"DEBUG: SPACE - Expected: '{expected_new_text}'")
         elif key_value == 'ENTER':
-            # Submit the score
-            self.submit_score(name_input.text)
+            print(f"DEBUG: ENTER - Submitting: '{current_internal_text}'")
+            self.submit_score(current_internal_text)
+            return
         else:
-            # Regular character input
-            name_input.insert_text(key_value)
+            # Regular character - limit to reasonable length
+            if len(current_internal_text) < 30:  # Increased character limit to 30
+                expected_new_text = current_internal_text + key_value
+                print(f"DEBUG: Character '{key_value}' - Expected: '{expected_new_text}'")
+            else:
+                print(f"DEBUG: Character '{key_value}' ignored - text too long (30 char limit)")
+                return
+        
+        # Update internal state and UI
+        self.virtual_keyboard_text = expected_new_text
+        
+        # Update the UI
+        screen = self.sm.get_screen('score')
+        name_input = screen.ids.name_input
+        name_input.text = expected_new_text
+        
+        print(f"DEBUG: Text updated to: '{expected_new_text}'")
 
     def submit_score(self, player_name):
         """Saves the score and transitions to the leaderboard."""
@@ -347,20 +384,41 @@ class GameManager:
         self.show_leaderboard(player_name)
 
     def show_leaderboard(self, player_name=None):
-        """Loads and displays the leaderboard."""
-        scores = self.dm.load_leaderboard()
+        """Loads and displays the leaderboard filtered by current date."""
+        all_scores = self.dm.load_leaderboard()
+        
+        # Get current date in YYYY-MM-DD format
+        current_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        print(f"DEBUG: Filtering leaderboard for date: {current_date}")
+        
+        # Filter scores for today only
+        today_scores = []
+        for score in all_scores:
+            timestamp_str = score.get('timestamp', '')
+            if timestamp_str:
+                # Extract date from timestamp (YYYY-MM-DDTHH:MM:SS format)
+                score_date = timestamp_str.split('T')[0]  # Get YYYY-MM-DD part
+                if score_date == current_date:
+                    today_scores.append(score)
+                    print(f"DEBUG: Including score: {score['name']} - {score['score']} from {score_date}")
+                else:
+                    print(f"DEBUG: Excluding score from {score_date}")
+        
+        print(f"DEBUG: Total scores today: {len(today_scores)} out of {len(all_scores)}")
+        
         screen = self.sm.get_screen('leaderboard')
         
-        # Show a congratulations message if the player is in the top 15
-        top_scores = sorted(scores, key=lambda x: x['score'], reverse=True)[:15]
-        is_top_player = any(entry.get('name') == player_name for entry in top_scores)
+        # Show a congratulations message if the player is in today's top 15
+        top_scores_today = sorted(today_scores, key=lambda x: x['score'], reverse=True)[:15]
+        is_top_player = any(entry.get('name') == player_name for entry in top_scores_today)
         
         if is_top_player:
-            screen.ids.congrats_label.text = f"Congratulations {player_name}! You're in the Hall of Fame!"
+            screen.ids.congrats_label.text = f"Parabéns {player_name}! Você está no Top de Hoje!"
         else:
             screen.ids.congrats_label.text = ""
         
-        screen.update_leaderboard(scores, player_name)
+        # Pass filtered scores to the leaderboard display
+        screen.update_leaderboard(today_scores, player_name)
 
     def cleanup(self):
         """Should be called when the app closes."""

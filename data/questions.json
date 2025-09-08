@@ -1,29 +1,109 @@
 {
   "questions": [
     {
-      "question": "What is our brand's main slogan?",
-      "options": ["Slogan A", "Slogan B", "Slogan C", "Slogan D"],
-      "correct_answer": "Slogan B"
+      "question": "Qual é o nome da campanha do IBP que destaca o papel do setor de petróleo e gás na transição energética justa e segura?",
+      "options": ["Energia do Futuro", "Energia da Evolução", "Transição Segura", "Futuro Sustentável"],
+      "correct_answer": "Energia da Evolução"
     },
     {
-      "question": "In which year was our company founded?",
-      "options": ["2005", "2010", "2015", "2020"],
-      "correct_answer": "2010"
+      "question": "Qual é o compromisso destacado pelo IBP na campanha “Energia da Evolução”?",
+      "options": ["Reduzir apenas os custos de produção", "Garantir o abastecimento energético e o desenvolvimento do Brasil", "Substituir imediatamente petróleo por solar e eólica", "Exportar 100% da produção de petróleo"],
+      "correct_answer": "Garantir o abastecimento energético e o desenvolvimento do Brasil"
     },
     {
-      "question": "What is our flagship product?",
-      "options": ["Product A", "Product B", "Product C", "Product D"],
-      "correct_answer": "Product A"
+      "question": "O setor de petróleo e gás é responsável por aproximadamente quanto da oferta interna de energia no Brasil?",
+      "options": ["25%", "35%", "Quase 50%", "75%"],
+      "correct_answer": "Quase 50%"
     },
     {
-      "question": "Which color represents our brand?",
-      "options": ["Red", "Blue", "Green", "Yellow"],
-      "correct_answer": "Blue"
+      "question": "Qual percentual aproximado da matriz energética brasileira é composto por fontes renováveis?",
+      "options": ["30%", "49%", "60%", "85%"],
+      "correct_answer": "49%"
     },
     {
-      "question": "How many countries do we operate in?",
-      "options": ["5", "10", "15", "20"],
-      "correct_answer": "10"
+      "question": "Qual a porcentagem de renovável na matriz elétrica brasileira?",
+      "options": ["20%", "50%", "60%", "90%"],
+      "correct_answer": "90%"
+    },
+    {
+      "question": "Qual função importante do gás natural é destacada no setor elétrico brasileiro?",
+      "options": ["Fonte principal de eletricidade", "Suporte à geração de eólica e solar (back-up)", "Substituto do etanol", "Fornecedor de hidrogênio puro"],
+      "correct_answer": "Suporte à geração de eólica e solar (back-up)"
+    },
+    {
+      "question": "O setor de óleo e gás responde por quanto das emissões no Brasil?",
+      "options": ["1%", "2%", "10%", "20%"],
+      "correct_answer": "2%"
+    },
+    {
+      "question": "Qual categoria de emissão é especialmente desafiadora no setor de O&G?",
+      "options": ["Emissões do transporte", "Emissões agrícolas", "Setores “hard-to-abate” (difícil de descarbonizar)", "Emissões domésticas"],
+      "correct_answer": "Setores “hard-to-abate” (difícil de descarbonizar)"
+    },
+    {
+      "question": "Qual o principal desafio para uma transição energética justa no Brasil?",
+      "options": ["Altos custos tecnológicos", "Disparidade entre pobreza energética e abundância de recursos fósseis", "Falta de biocombustíveis", "Escassez de energia renovável"],
+      "correct_answer": "Disparidade entre pobreza energética e abundância de recursos fósseis"
+    },
+    {
+      "question": "Quais tecnologias o setor de O&G está investindo para apoiar a redução de emissões?",
+      "options": ["Apenas energia solar", "Apenas biocombustíveis", "Biocombustíveis, CCUS (captura, uso e armazenamento de carbono), e inovação tecnológica", "Energia nuclear e eólica"],
+      "correct_answer": "Biocombustíveis, CCUS (captura, uso e armazenamento de carbono), e inovação tecnológica"
+    },
+    {
+      "question": "No cenário Net Zero by 2050 (AIE), ainda se espera produção de petróleo em 2050. Qual a estimativa diária?",
+      "options": ["10 milhões de barris/dia", "24 milhões de barris/dia", "50 milhões de barris/dia", "Zero produção"],
+      "correct_answer": "24 milhões de barris/dia"
+    },
+    {
+      "question": "Qual porcentagem das emissões reduzidas até 2050 dependerá de tecnologias atualmente em estágio inicial e sem escala comercial?",
+      "options": ["10%", "35%", "60%", "90%"],
+      "correct_answer": "35%"
+    },
+    {
+      "question": "Entre 2010 e 2024, quanto o setor de óleo e gás arrecadou em tributos e impostos, segundo o IBP?",
+      "options": ["R$ 1 trilhão", "R$ 2 trilhões", "R$ 3 trilhões", "R$ 5 trilhões"],
+      "correct_answer": "R$ 3 trilhões"
+    },
+    {
+      "question": "Qual é o valor projetado de investimento do setor em atividades de Exploração e Produção até 2034?",
+      "options": ["US$ 100 bilhões", "US$ 120 bilhões", "US$ 165 bilhões", "US$ 200 bilhões"],
+      "correct_answer": "US$ 165 bilhões"
+    },
+    {
+      "question": "O setor de O&G deve gerar quantos empregos ao ano até 2033?",
+      "options": ["100 mil", "Quase 400 mil", "1 milhão", "50 mil"],
+      "correct_answer": "Quase 400 mil"
+    },
+    {
+      "question": "No contexto da transição energética justa, além da segurança e inovação, qual outro valor o IBP destaca para o setor?",
+      "options": ["Exportação de petróleo", "Justiça social e inclusão", "Crescimento econômico apenas", "Isolamento tecnológico"],
+      "correct_answer": "Justiça social e inclusão"
+    },
+    {
+      "question": "Qual frase define melhor o que é energia justa?",
+      "options": ["Garantir acesso à energia limpa, segura e acessível para todos, sem deixar ninguém para trás no processo de transição energética.", "Substituir todas as fontes fósseis imediatamente, mesmo que isso aumente custos e reduza o acesso à energia.", "Focar em eficiência tecnológica, sem considerar impactos sociais ou econômicos.", "Produzir energia exclusivamente para países desenvolvidos, já que eles têm mais recursos para investir."],
+      "correct_answer": "Garantir acesso à energia limpa, segura e acessível para todos, sem deixar ninguém para trás no processo de transição energética."
+    },
+    {
+      "question": "Qual é o nome do portal do IBP em que você encontra diversos conteúdos explicativos sobre o setor de óleo, gás e biocombustíveis?",
+      "options": ["Energia da Evolução", "Além da Superfície", "Do poço ao posto", "Energia IBP"],
+      "correct_answer": "Além da Superfície"
+    },
+    {
+      "question": "Qual é o papel social da transição energética justa?",
+      "options": ["Reduzir apenas custos de produção", "Assegurar que o acesso à energia acompanhe inclusão social, redução da pobreza e desenvolvimento econômico", "Produzir energia apenas para exportação", "Priorizar apenas inovação tecnológica"],
+      "correct_answer": "Assegurar que o acesso à energia acompanhe inclusão social, redução da pobreza e desenvolvimento econômico"
+    },
+    {
+      "question": "Por que a diversidade de fontes energéticas é essencial para o futuro?",
+      "options": ["Garante equilíbrio entre segurança, acessibilidade e sustentabilidade", "Permite depender de uma única fonte para reduzir custos", "Evita investimentos em novas tecnologias", "Mantém foco exclusivo em fósseis"],
+      "correct_answer": "Garante equilíbrio entre segurança, acessibilidade e sustentabilidade"
+    },
+    {
+      "question": "Qual é o papel da inovação tecnológica na transição energética?",
+      "options": ["Acelerar a redução de emissões e ampliar alternativas energéticas sustentáveis", "Reduzir empregos e investimentos sociais", "Substituir políticas públicas", "Eliminar necessidade de fontes renováveis"],
+      "correct_answer": "Acelerar a redução de emissões e ampliar alternativas energéticas sustentáveis"
     }
   ]
 }
