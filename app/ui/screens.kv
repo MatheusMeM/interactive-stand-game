@@ -232,36 +232,52 @@
         allow_stretch: True
         keep_ratio: False
         opacity: 0.15
+    
+    # Master layout to enforce padding and vertical structure
     BoxLayout:
         orientation: 'vertical'
-        padding: 50
-        spacing: 20
-        BrandedLabel:
-            id: question_label
-            text: '...'
-            font_size: '30sp'
+        padding: screen_padding
+        spacing: dp(25)
+
+        # --- Question Dialog Box (40% of vertical space) ---
+        BoxLayout:
             size_hint_y: 0.4
-            text_size: self.width, None
+            padding: dp(30)
+            canvas.before:
+                Color:
+                    rgba: color_light_gray
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(30)]
+            BrandedLabel:
+                id: question_label
+                text: 'A carregar pergunta...'
+                font_size: '32sp'
+                # Allow text to wrap within the available width
+                text_size: self.width, None
+
+        # --- 2x2 Answer Grid (60% of vertical space) ---
         GridLayout:
+            id: answers_grid
             cols: 2
-            spacing: 15
+            spacing: dp(15)
+            size_hint_y: 0.6
+            
+            # Note: on_press now passes the button widget itself (self).
+            # This is more powerful as it gives the logic full context.
             BrandedButton:
-                id: option_1
-                on_press: app.game_manager.check_answer(self.text)
+                id: option_a
+                on_press: app.game_manager.check_answer(self)
             BrandedButton:
-                id: option_2
-                on_press: app.game_manager.check_answer(self.text)
+                id: option_b
+                on_press: app.game_manager.check_answer(self)
             BrandedButton:
-                id: option_3
-                on_press: app.game_manager.check_answer(self.text)
+                id: option_c
+                on_press: app.game_manager.check_answer(self)
             BrandedButton:
-                id: option_4
-                on_press: app.game_manager.check_answer(self.text)
-        BrandedLabel:
-            id: feedback_label
-            text: ''
-            font_size: '25sp'
-            size_hint_y: 0.15
+                id: option_d
+                on_press: app.game_manager.check_answer(self)
 
 <ScoreScreen>:
     name: 'score'

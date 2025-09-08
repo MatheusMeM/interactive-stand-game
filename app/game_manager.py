@@ -178,26 +178,38 @@ class GameManager:
         self.quiz_in_progress = True
         self.current_quiz_round += 1
 
-    def check_answer(self, selected_answer: str):
-        """Callback for TOUCHSCREEN answer buttons (Quiz Game ONLY)."""
-        if not self.quiz_in_progress:
-            return
+    def check_answer(self, selected_button_widget):
+        """
+        Orchestrates the answer checking and delegates the feedback presentation.
+        This is the central logic hub for a quiz round.
+        """
+        if not self.quiz_in_progress: return
         self.quiz_in_progress = False
 
         screen = self.sm.get_screen('quiz_game')
         correct_answer = self.current_question_data['correct_answer']
+        selected_answer = selected_button_widget.text
+        is_correct = (selected_answer == correct_answer)
 
-        if selected_answer == correct_answer:
-            self.score += 500 # Fixed points for a correct quiz answer
+        # --- Core Logic ---
+        if is_correct:
+            self.score += 500
             self.am.play('correct')
-            screen.ids.feedback_label.text = 'Correct!'
             print("Quiz answer: Correct!")
         else:
             self.am.play('wrong')
-            screen.ids.feedback_label.text = f'Wrong! The correct answer was:\n{correct_answer}'
             print("Quiz answer: Incorrect!")
 
-        Clock.schedule_once(self.start_quiz_round, 2.0) # Wait 2 seconds before next question
+        # --- Delegation to Presentation Layer ---
+        # Command the screen to show the comprehensive feedback.
+        screen.show_feedback(
+            is_correct=is_correct,
+            correct_answer_text=correct_answer,
+            selected_widget=selected_button_widget
+        )
+
+        # Schedule the next round, allowing the player 2.5 seconds to absorb the feedback.
+        Clock.schedule_once(self.start_quiz_round, 2.5)
 
     def end_game(self):
         """Called after the last quiz round. Transitions to the Score screen."""
