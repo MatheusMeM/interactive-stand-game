@@ -242,9 +242,23 @@ class GameManager:
         print(f"Game over! Final Score: {self.score}")
         self.go_to_screen('score')
         screen = self.sm.get_screen('score')
-        screen.ids.final_score_label.text = f'Your Final Score: {self.score}'
+        screen.ids.final_score_label.text = f'Sua Pontuação Final: {self.score}'
         screen.ids.name_input.text = '' # Clear input field
         screen.ids.name_input.focus = True # Focus the TextInput for the VKeyboard
+        
+        # Bind text validation to limit input length
+        screen.ids.name_input.bind(text=self._validate_name_input)
+
+    def _validate_name_input(self, instance, text):
+        """Validates and limits the name input to reasonable length for initials."""
+        # Limit to 8 characters maximum for initials
+        max_length = 8
+        if len(text) > max_length:
+            instance.text = text[:max_length]
+        
+        # Convert to uppercase automatically
+        if text != text.upper():
+            instance.text = text.upper()
 
     def submit_score(self, player_name):
         """Saves the score and transitions to the leaderboard."""

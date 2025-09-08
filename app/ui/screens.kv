@@ -309,33 +309,102 @@
         allow_stretch: True
         keep_ratio: False
         opacity: 0.15
+
+    # Main layout that respects the global screen padding
     BoxLayout:
         orientation: 'vertical'
-        padding: 50
-        spacing: 20
-        BrandedLabel:
-            text: 'Congratulations!'
-            font_size: '50sp'
-        BrandedLabel:
-            id: final_score_label
-            text: 'Your Final Score: 0'
-            font_size: '40sp'
-        TextInput:
-            id: name_input
-            hint_text: 'ENTER YOUR INITIALS'
-            font_name: 'Roboto'
-            font_size: '35sp'
-            multiline: False
-            readonly: True
-            halign: 'center'
-            size_hint_y: None
-            height: '60dp'
-        BrandedButton:
-            text: 'Submit Score'
-            on_press: app.game_manager.submit_score(name_input.text)
-        VKeyboard:
-            target: name_input
-            layout: 'qwerty'
+        padding: screen_padding
+        spacing: dp(25)
+
+        # Top spacer
+        BoxLayout:
+            size_hint_y: 0.1
+
+        # --- SCORE DIALOG BOX (40% of vertical space) ---
+        BoxLayout:
+            size_hint_y: 0.4
+            padding: dp(40)
+            canvas.before:
+                Color:
+                    rgba: color_light_gray
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(30)]
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: dp(20)
+                
+                BrandedLabel:
+                    text: 'Parabéns!'
+                    font_size: '60sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    halign: 'center'
+
+                BrandedLabel:
+                    id: final_score_label
+                    text: 'Sua Pontuação Final: 0'
+                    font_size: '45sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    halign: 'center'
+
+                # Name input section
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: dp(120)
+
+                    BrandedLabel:
+                        text: 'Digite suas iniciais:'
+                        font_size: '35sp'
+                        size_hint_y: None
+                        height: dp(40)
+                        halign: 'center'
+
+                    TextInput:
+                        id: name_input
+                        hint_text: 'SUAS INICIAIS'
+                        font_name: 'Roboto'
+                        font_size: '40sp'
+                        multiline: False
+                        readonly: False
+                        halign: 'center'
+                        size_hint_y: None
+                        height: dp(70)
+                        background_color: color_white
+                        foreground_color: color_primary_blue
+                        cursor_color: color_primary_blue
+                        selection_color: color_primary_green
+                        padding: [dp(20), dp(15)]
+                        on_text_validate: app.game_manager.submit_score(self.text)
+
+        # --- SUBMIT BUTTON (15% of vertical space) ---
+        BoxLayout:
+            size_hint_y: 0.15
+            padding: [dp(100), 0]
+            
+            BrandedButton:
+                text: 'ENVIAR PONTUAÇÃO'
+                size_hint: 1, 1
+                on_press: app.game_manager.submit_score(name_input.text)
+
+        # --- VIRTUAL KEYBOARD (35% of vertical space) ---
+        BoxLayout:
+            size_hint_y: 0.35
+            padding: [dp(20), 0]
+            
+            VKeyboard:
+                id: virtual_keyboard
+                target: name_input
+                layout: 'qwerty'
+                do_translation: False
+                pos_hint: {'center_x': 0.5}
+                size_hint: 1, 1
 
 <LeaderboardScreen>:
     name: 'leaderboard'
