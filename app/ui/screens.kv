@@ -81,7 +81,11 @@
         orientation: 'vertical'
         padding: screen_padding
         spacing: dp(25)
-
+        Image:
+            source: 'assets/images/ibp_logo.png'
+            size_hint: 1, 0.2
+            allow_stretch: True
+            keep_ratio: True
         # --- TOP 5/8: The Dialog Box ---
         BoxLayout:
             size_hint_y: 0.625 # This is 5/8
@@ -93,13 +97,27 @@
                     pos: self.pos
                     size: self.size
                     radius: [dp(30)]
-            BrandedLabel:
-                text: '[b]Como Jogar[/b]\n\n1. Agilidade: Pressione o botão físico que acender.\n\n2. Quiz: Responda as perguntas na tela.'
-                markup: True
-                font_size: '32sp'
-                text_size: self.width, None # Enable text wrapping
-                valign: 'center'
-                halign: 'left'
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: dp(15)
+                
+                BrandedLabel:
+                    id: title_label # <-- The missing ID
+                    text: 'Placeholder Title'
+                    font_size: '40sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1] # Make height fit the text
+                    halign: 'left'
+
+                BrandedLabel:
+                    id: body_label
+                    text: 'Placeholder Body Text'
+                    markup: True
+                    font_size: '32sp'
+                    text_size: self.width, None
+                    valign: 'top'
+                    halign: 'left'
 
         # --- BOTTOM 3/8: The Start Button and Logo ---
         BoxLayout:
@@ -108,15 +126,13 @@
             spacing: dp(20)
             
             BrandedButton:
-                text: 'COMEÇAR' # Text updated to Portuguese
+                id: action_button # <-- NEW ID
+                text: 'PLACEHOLDER' # Will be replaced by GameManager
                 size_hint: 1, 0.7
-                on_press: app.game_manager.start_game()
+                # --- CHANGED: A new generic callback ---
+                on_press: app.game_manager.proceed_from_instructions()
             
-            Image:
-                source: 'assets/images/ibp_logo.png'
-                size_hint: 1, 0.3
-                allow_stretch: True
-                keep_ratio: True
+
 
 
 <AgilityGameScreen>:

@@ -13,7 +13,11 @@ class WelcomeScreen(Screen):
     pass
 
 class InstructionsScreen(Screen):
-    pass
+    def update_content(self, title, body, button_text):
+        """Updates the text of the labels and button on the screen."""
+        self.ids.title_label.text = title
+        self.ids.body_label.text = body
+        self.ids.action_button.text = button_text
 
 class AgilityGameScreen(Screen):
     pass

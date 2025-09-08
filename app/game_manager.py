@@ -30,6 +30,7 @@ class GameManager:
         self.current_quiz_round = 0
         self.current_question_data = None
         self.quiz_in_progress = False
+        self.instruction_state = None # <-- NEW state variable
 
         print("GameManager initialized with HardwareController and DataManager.")
 
@@ -118,21 +119,29 @@ class GameManager:
         Clock.schedule_once(self.start_agility_round, 0.5)
 
     def end_agility_section(self):
-        """Called ONCE after the last agility round. Transitions to the quiz."""
-        print("Agility section finished. Starting Quiz section.")
+        """Called after agility. Prepares and shows instructions for the QUIZ game."""
+        print("Agility section finished. Showing Quiz instructions.")
         self.hw.turn_off_all_leds()
-
-        # Ensure we have enough questions to sample from.
+        self.instruction_state = 'quiz'
+        screen = self.sm.get_screen('instructions')
+        screen.update_content(
+            title='[b]Como Jogar: Quiz[/b]',
+            body='Agora, teste seu conhecimento! Responda as perguntas na tela para somar mais pontos.',
+            button_text='COMEÇAR QUIZ'
+        )
+        self.go_to_screen('instructions')
+    
+    def start_quiz_section(self):
+        """Prepares the quiz data and transitions to the quiz screen."""
         if len(self.all_questions) < self.total_quiz_rounds:
-             print(f"Error: Not enough questions in questions.json. Found {len(self.all_questions)}, need {self.total_quiz_rounds}.")
-             # As a fallback, just end the game.
+             print(f"Error: Not enough questions. Found {len(self.all_questions)}, need {self.total_quiz_rounds}.")
              self.end_game()
              return
 
         self.go_to_screen('quiz_game')
         self.questions_for_round = random.sample(self.all_questions, self.total_quiz_rounds)
-        Clock.schedule_once(self.start_quiz_round, 1.0)
-        
+        Clock.schedule_once(self.start_quiz_round, 0.5)
+
     def start_quiz_round(self, dt=None):
         """Starts a single round of the quiz game."""
         if self.current_quiz_round >= len(self.questions_for_round):
@@ -227,8 +236,22 @@ class GameManager:
         self.sm.current = screen_name
 
     def show_instructions(self):
-        """Transitions the view to the instructions screen."""
+        """Prepares and shows the instructions for the AGILITY game."""
+        self.instruction_state = 'agility'
+        screen = self.sm.get_screen('instructions')
+        screen.update_content(
+            title='[b]Como Jogar: Agilidade[/b]',
+            body='Pressione o botão físico que acender o mais rápido que puder para marcar mais pontos!',
+            button_text='COMEÇAR AGILIDADE'
+        )
         self.go_to_screen('instructions')
+
+    def proceed_from_instructions(self):
+        """Called by the instruction screen button. Acts based on the current state."""
+        if self.instruction_state == 'agility':
+            self.start_game()
+        elif self.instruction_state == 'quiz':
+            self.start_quiz_section()
 
     def return_to_welcome(self):
         """Returns to the welcome screen and resets the game state."""
