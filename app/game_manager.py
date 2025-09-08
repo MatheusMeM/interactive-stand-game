@@ -6,6 +6,8 @@ from kivy.uix.screenmanager import ScreenManager
 from app.hardware_io import HardwareController
 from app.data_manager import DataManager
 from app.audio_manager import AudioManager
+from config import (AGILITY_BUTTONS_COUNT, AGILITY_MAX_SCORE, AGILITY_SCORE_PENALTY_PER_MS,
+                   QUIZ_ROUNDS_COUNT, QUIZ_POINTS_PER_CORRECT)
 import datetime
 
 class GameManager:
@@ -20,15 +22,16 @@ class GameManager:
         self.questions_for_round = []
 
         self.score = 0
-        # NEW/REPURPOSED Agility State
-        self.agility_buttons_to_press = 10 # Total buttons to hit
+        # CONFIGURABLE Agility State - now uses config values
+        self.agility_buttons_to_press = AGILITY_BUTTONS_COUNT
         self.agility_buttons_remaining = self.agility_buttons_to_press
         self.agility_start_time = 0
         self.chronometer_event = None
         self.agility_in_progress = False
         self.target_led_index = -1
         
-        self.total_quiz_rounds = 3
+        # CONFIGURABLE Quiz State - now uses config values
+        self.total_quiz_rounds = QUIZ_ROUNDS_COUNT
         self.current_quiz_round = 0
         self.current_question_data = None
         self.quiz_in_progress = False
@@ -41,7 +44,7 @@ class GameManager:
         """Resets game state and starts the countdown for the agility game."""
         self.score = 0
         self.current_quiz_round = 0
-        self.agility_buttons_remaining = self.agility_buttons_to_press # Reset counter
+        self.agility_buttons_remaining = AGILITY_BUTTONS_COUNT # Reset using config value
         self.go_to_screen('instructions') # START AT INSTRUCTIONS
         # self.start_countdown() # This is now called from proceed_from_instructions
 
@@ -113,7 +116,7 @@ class GameManager:
 
     def start_agility_game(self, dt=None): # This method is now simpler
         """This method now ONLY starts the actual agility gameplay."""
-        self.agility_buttons_remaining = self.agility_buttons_to_press
+        self.agility_buttons_remaining = AGILITY_BUTTONS_COUNT # Use config value
         
         # Update UI for the start of the round
         screen = self.sm.get_screen('agility_game')
@@ -123,6 +126,8 @@ class GameManager:
         self.agility_start_time = time.perf_counter()
         self.chronometer_event = Clock.schedule_interval(self.update_chronometer, 1/60)
         self.trigger_next_led()
+        
+        print(f"DEBUG: Agility game started with {AGILITY_BUTTONS_COUNT} buttons to press")
 
     def update_chronometer(self, dt):
         """Updates the chronometer label on screen."""
@@ -153,9 +158,9 @@ class GameManager:
                 # GAME OVER
                 self.chronometer_event.cancel()
                 final_time = time.perf_counter() - self.agility_start_time
-                # Scoring: 20000 points minus 100 points per tenth of a second
-                self.score = max(0, 20000 - int(final_time * 1000))
-                print(f"Agility finished in {final_time:.2f}s. Score: {self.score}")
+                # CONFIGURABLE Scoring: max score minus penalty per millisecond
+                self.score = max(0, AGILITY_MAX_SCORE - int(final_time * 1000 * AGILITY_SCORE_PENALTY_PER_MS))
+                print(f"Agility finished in {final_time:.2f}s. Score: {self.score} (Max: {AGILITY_MAX_SCORE}, Penalty: {AGILITY_SCORE_PENALTY_PER_MS}/ms)")
                 self.end_agility_section()
             else:
                 # Trigger the next button
@@ -177,8 +182,8 @@ class GameManager:
     
     def start_quiz_section(self):
         """Prepares the quiz data and transitions to the quiz screen."""
-        if len(self.all_questions) < self.total_quiz_rounds:
-             print(f"Error: Not enough questions. Found {len(self.all_questions)}, need {self.total_quiz_rounds}.")
+        if len(self.all_questions) < QUIZ_ROUNDS_COUNT:
+             print(f"Error: Not enough questions. Found {len(self.all_questions)}, need {QUIZ_ROUNDS_COUNT}.")
              self.end_game()
              return
 
@@ -187,7 +192,9 @@ class GameManager:
         self.quiz_in_progress = False
         
         self.go_to_screen('quiz_game')
-        self.questions_for_round = random.sample(self.all_questions, self.total_quiz_rounds)
+        self.questions_for_round = random.sample(self.all_questions, QUIZ_ROUNDS_COUNT)
+        
+        print(f"DEBUG: Quiz section started with {QUIZ_ROUNDS_COUNT} questions")
         
         # Reset all quiz buttons to default state before starting
         screen = self.sm.get_screen('quiz_game')
@@ -235,11 +242,11 @@ class GameManager:
         print(f"Está correto: {is_correct}")
         print("=== END DEBUG ===\n")
 
-        # --- Core Logic ---
+        # --- Core Logic with CONFIGURABLE scoring ---
         if is_correct:
-            self.score += 500
+            self.score += QUIZ_POINTS_PER_CORRECT
             self.am.play('correct')
-            print("Quiz answer: Correct!")
+            print(f"Quiz answer: Correct! (+{QUIZ_POINTS_PER_CORRECT} points)")
         else:
             self.am.play('wrong')
             print("Quiz answer: Incorrect!")
