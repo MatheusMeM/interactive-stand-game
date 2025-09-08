@@ -151,8 +151,6 @@
                 allow_stretch: True
                 keep_ratio: True
 
-
-
 <AgilityGameScreen>:
     name: 'agility_game'
     canvas.before:
@@ -167,16 +165,18 @@
         keep_ratio: False
         opacity: 0.15
 
-    # Use a FloatLayout to center the dialog box
+    # --- CORRECTED LAYOUT: Reverting to FloatLayout for centering ---
+
     FloatLayout:
-        # The main dialog box (initially invisible during countdown)
+        # The dialog box, now acting as the chronometer's frame
         BoxLayout:
             id: game_layout
             orientation: 'vertical'
-            size_hint: 0.8, 0.5
+            size_hint: 0.56, 0.36 # A bit taller to feel more balanced
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            padding: dp(30)
-            opacity: 0 # <-- Starts hidden
+            padding: (dp(20), dp(40)) # More vertical padding
+            spacing: dp(1)
+            opacity: 0
             canvas.before:
                 Color:
                     rgba: color_light_gray
@@ -184,36 +184,40 @@
                     pos: self.pos
                     size: self.size
                     radius: [dp(30)]
-            # ... (chronometer labels are unchanged) ...
+
+            # --- NEW SIMPLIFIED HIERARCHY ---
             BrandedLabel:
                 text: 'TEMPO'
-                font_size: '30sp'
-                size_hint_y: 0.30
-                valign: 'bottom'
+                font_size: '40sp'
+                size_hint_y: 0.3
+                valign: 'bottom' # Aligns to the bottom of its space
             
             BrandedLabel:
                 id: chronometer_label
                 text: '00:00'
-                font_size: '190sp'
+                font_size: '180sp' # Extra large font
                 bold: True
-                size_hint_y: 0.5
+                size_hint_y: 0.4 
 
             BrandedLabel:
                 id: remaining_label
                 text: 'Restantes: 10'
-                font_size: '40sp'
-                size_hint_y: 0.25
-
-        # --- NEW: Countdown Overlay ---
+                font_size: '50sp'
+                size_hint_y: 0.3
+                valign: 'top' # Aligns to the top of its space
+        # Countdown Overlay (It's a sibling in the FloatLayout, so it covers everything)
         BrandedLabel:
             id: countdown_overlay
             text: ''
-            font_size: '200sp'
+            font_size: '240sp'
             bold: True
             color: color_primary_blue
-            # This label covers the whole screen
-            size_hint: 1, 1
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            canvas.before:
+                Color:
+                    rgba: color_white
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
 
 <QuizGameScreen>:
     name: 'quiz_game'
