@@ -47,6 +47,23 @@
             radius: [dp(30)]
 
 
+# Widget customizado para as teclas do teclado virtual
+<VirtualKeyButton@Button>:
+    font_name: 'Roboto'
+    background_color: 0, 0, 0, 0  # Transparente para usar canvas personalizado
+    color: color_white
+    font_size: '32sp'
+    bold: True
+    background_normal: ''
+    
+    canvas.before:
+        Color:
+            rgba: (0.3, 0.3, 0.3, 1) if self.state == 'normal' else (0.2, 0.2, 0.2, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(8)]
+
 <BrandedLabel@Label>:
     font_name: 'Roboto'
     color: color_primary_blue
@@ -415,132 +432,178 @@
             size_hint_y: 0.35
             padding: [dp(10), 0]
             
-            # FIXED: Custom keyboard implementation
-            GridLayout:
-                id: custom_keyboard
-                cols: 10
-                spacing: dp(5)
-                size_hint: 1, 1
+            # NEW: Teclado Virtual seguindo especificação técnica
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: dp(8)
                 
-                # First row: Q W E R T Y U I O P
-                Button:
-                    text: 'Q'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'W'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'E'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'R'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'T'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'Y'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'U'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'I'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'O'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'P'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
+                # Linha 1: Números e BACKSPACE (11 teclas)
+                BoxLayout:
+                    size_hint_y: 0.2
+                    spacing: dp(4)
                     
-                # Second row: A S D F G H J K L DEL
-                Button:
-                    text: 'A'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'S'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'D'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'F'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'G'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'H'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'J'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'K'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'L'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: '⌫'
-                    font_size: '30sp'
-                    background_color: (0.8, 0.3, 0.3, 1)
-                    on_press: name_input.do_backspace()
+                    VirtualKeyButton:
+                        text: '1'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '2'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '3'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '4'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '5'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '6'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '7'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '8'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '9'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '0'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '←X'
+                        background_color: (0.6, 0.2, 0.2, 1)
+                        on_press: app.game_manager.virtual_key_press('BACKSPACE')
+                
+                # Linha 2: QWERTY Superior (10 teclas, centralizadas)
+                BoxLayout:
+                    size_hint_y: 0.2
+                    spacing: dp(4)
                     
-                # Third row: Z X C V B N M SPACE
-                Button:
-                    text: 'Z'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'X'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'C'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'V'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'B'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'N'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'M'
-                    font_size: '30sp'
-                    on_press: name_input.insert_text(self.text)
-                Button:
-                    text: 'ESPAÇO'
-                    font_size: '20sp'
-                    size_hint_x: 3
-                    on_press: name_input.insert_text(' ')
+                    Widget:
+                        size_hint_x: 0.05
+                    VirtualKeyButton:
+                        text: 'Q'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'W'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'E'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'R'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'T'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'Y'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'U'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'I'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'O'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'P'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    Widget:
+                        size_hint_x: 0.05
+                
+                # Linha 3: ASDF Meio (9 teclas, centralizadas)
+                BoxLayout:
+                    size_hint_y: 0.2
+                    spacing: dp(4)
+                    
+                    Widget:
+                        size_hint_x: 0.1
+                    VirtualKeyButton:
+                        text: 'A'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'S'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'D'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'F'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'G'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'H'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'J'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'K'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'L'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    Widget:
+                        size_hint_x: 0.1
+                
+                # Linha 4: ZXCV Inferior + ENTER (8 teclas)
+                BoxLayout:
+                    size_hint_y: 0.2
+                    spacing: dp(4)
+                    
+                    Widget:
+                        size_hint_x: 0.15
+                    VirtualKeyButton:
+                        text: 'Z'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'X'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'C'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'V'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'B'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'N'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: 'M'
+                        on_press: app.game_manager.virtual_key_press(self.text)
+                    VirtualKeyButton:
+                        text: '↵'
+                        size_hint_x: 2.5
+                        background_color: color_primary_green
+                        on_press: app.game_manager.virtual_key_press('ENTER')
+                    Widget:
+                        size_hint_x: 0.15
+                
+                # Linha 5: Barra de Espaço (1 tecla central)
+                BoxLayout:
+                    size_hint_y: 0.2
+                    spacing: dp(4)
+                    
+                    Widget:
+                        size_hint_x: 0.2
+                    VirtualKeyButton:
+                        text: '▢'
+                        size_hint_x: 0.6
+                        font_size: '20sp'
+                        on_press: app.game_manager.virtual_key_press('SPACE')
+                    Widget:
+                        size_hint_x: 0.2
 
 <LeaderboardScreen>:
     name: 'leaderboard'
@@ -555,25 +618,57 @@
         allow_stretch: True
         keep_ratio: False
         opacity: 0.15
+    
+    # Layout principal com padding adequado
     BoxLayout:
         orientation: 'vertical'
-        padding: 20
-        spacing: 10
+        padding: screen_padding
+        spacing: dp(20)
+        
+        # Título principal
         BrandedLabel:
             text: 'Hall of Fame'
-            font_size: '50sp'
-            size_hint_y: 0.2
+            font_size: '70sp'
+            bold: True
+            size_hint_y: 0.15
+            color: color_primary_blue
+        
+        # Mensagem de parabéns
         BrandedLabel:
             id: congrats_label
             text: ''
-            font_size: '30sp'
-            size_hint_y: 0.1
+            font_size: '35sp'
+            size_hint_y: 0.08
             color: color_primary_green
-        GridLayout:
-            id: leaderboard_grid
-            cols: 3
-            size_hint_y: 0.6
+            bold: True
+        
+        # Container do leaderboard com fundo
+        BoxLayout:
+            size_hint_y: 0.65
+            padding: dp(30)
+            canvas.before:
+                Color:
+                    rgba: color_light_gray
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(20)]
+            
+            ScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+                
+                GridLayout:
+                    id: leaderboard_grid
+                    cols: 3
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+                    row_default_height: dp(50)
+        
+        # Botão de jogar novamente
         BrandedButton:
-            text: 'Play Again'
-            size_hint_y: 0.1
+            text: 'Jogar Novamente'
+            size_hint_y: 0.12
+            font_size: '50sp'
             on_press: app.game_manager.return_to_welcome()

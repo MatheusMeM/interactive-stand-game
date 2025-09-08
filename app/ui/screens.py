@@ -124,31 +124,78 @@ class ScoreScreen(Screen):
 
 class LeaderboardScreen(Screen):
     def update_leaderboard(self, scores, player_name=None):
-        """Clears and rebuilds the leaderboard display."""
+        """Clears and rebuilds the leaderboard display with improved visual design."""
         grid = self.ids.leaderboard_grid
         grid.clear_widgets()
 
         # Sort scores descending
         sorted_scores = sorted(scores, key=lambda x: x['score'], reverse=True)
         
-        # Add header
-        grid.add_widget(Label(text='Rank', bold=True))
-        grid.add_widget(Label(text='Name', bold=True))
-        grid.add_widget(Label(text='Score', bold=True))
+        # Add header with professional styling
+        header_color = (0/255, 64/255, 119/255, 1)  # color_primary_blue
+        grid.add_widget(Label(
+            text='RANK',
+            bold=True,
+            font_size='32sp',
+            color=header_color,
+            font_name='Roboto'
+        ))
+        grid.add_widget(Label(
+            text='NOME',
+            bold=True,
+            font_size='32sp',
+            color=header_color,
+            font_name='Roboto'
+        ))
+        grid.add_widget(Label(
+            text='PONTOS',
+            bold=True,
+            font_size='32sp',
+            color=header_color,
+            font_name='Roboto'
+        ))
 
-        # Add top scores
+        # Add top scores with alternating colors for better readability
         for i, entry in enumerate(sorted_scores[:15]):
             is_player = player_name and entry.get('name') == player_name
             
-            rank_label = Label(text=str(i + 1))
-            name_label = Label(text=entry.get('name', 'N/A'))
-            score_label = Label(text=str(entry.get('score', 0)))
-
+            # Color scheme: player highlighted in green, others in blue tones
             if is_player:
-                # Highlight the current player's entry
-                rank_label.color = (0, 1, 0, 1) # Green
-                name_label.color = (0, 1, 0, 1)
-                score_label.color = (0, 1, 0, 1)
+                text_color = (134/255, 188/255, 37/255, 1)  # color_primary_green
+                font_weight = True
+                font_size = '28sp'
+            else:
+                text_color = (0/255, 64/255, 119/255, 1)  # color_primary_blue
+                font_weight = False
+                font_size = '24sp'
+            
+            # Rank label
+            rank_text = f"#{i + 1}" if i < 3 else str(i + 1)
+            rank_label = Label(
+                text=rank_text,
+                color=text_color,
+                bold=font_weight,
+                font_size=font_size,
+                font_name='Roboto'
+            )
+            
+            # Name label
+            name_label = Label(
+                text=entry.get('name', 'N/A'),
+                color=text_color,
+                bold=font_weight,
+                font_size=font_size,
+                font_name='Roboto'
+            )
+            
+            # Score label
+            score_label = Label(
+                text=str(entry.get('score', 0)),
+                color=text_color,
+                bold=font_weight,
+                font_size=font_size,
+                font_name='Roboto'
+            )
 
             grid.add_widget(rank_label)
             grid.add_widget(name_label)

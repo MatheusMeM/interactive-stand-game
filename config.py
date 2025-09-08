@@ -15,7 +15,7 @@ AGILITY_MAX_SCORE = 20000          # Maximum score for agility (points deducted 
 AGILITY_SCORE_PENALTY_PER_MS = 1   # Points deducted per millisecond
 
 # Quiz Game Settings
-QUIZ_ROUNDS_COUNT = 4              # Number of quiz questions per game
+QUIZ_ROUNDS_COUNT = 1              # Number of quiz questions per game
 QUIZ_POINTS_PER_CORRECT = 500      # Points awarded for each correct answer
 
 # 3. Game Timings (in seconds)

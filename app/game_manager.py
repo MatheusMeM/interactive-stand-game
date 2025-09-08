@@ -300,6 +300,27 @@ class GameManager:
         if text != text.upper():
             instance.text = text.upper()
 
+    def virtual_key_press(self, key_value):
+        """Handles virtual keyboard key presses with proper functionality."""
+        if self.sm.current != 'score':
+            return
+            
+        screen = self.sm.get_screen('score')
+        name_input = screen.ids.name_input
+        
+        if key_value == 'BACKSPACE':
+            # Remove last character
+            name_input.do_backspace()
+        elif key_value == 'SPACE':
+            # Add space character
+            name_input.insert_text(' ')
+        elif key_value == 'ENTER':
+            # Submit the score
+            self.submit_score(name_input.text)
+        else:
+            # Regular character input
+            name_input.insert_text(key_value)
+
     def submit_score(self, player_name):
         """Saves the score and transitions to the leaderboard."""
         player_name = player_name.strip().upper()
