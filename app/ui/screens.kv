@@ -157,54 +157,50 @@
     name: 'agility_game'
     canvas.before:
         Color:
-            rgba: color_dark_gray
+            rgba: color_white
         Rectangle:
             pos: self.pos
             size: self.size
-    
+    Image:
+        source: 'assets/images/background_graphic.png'
+        allow_stretch: True
+        keep_ratio: False
+        opacity: 0.15
+
+    # Use a FloatLayout to center the dialog box
     FloatLayout:
-        # Subtle branding watermark in the background
-        Image:
-            source: 'assets/images/ibp_logo.png'
-            opacity: 0.1
-            size_hint: 0.5, 0.5
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-
-        # Top bar for score and round info
+        # The dialog box itself
         BoxLayout:
-            pos_hint: {'top': 1}
-            size_hint_y: 0.1
-            padding: (dp(20), 0)
-            BrandedLabel:
-                id: round_label
-                text: 'Round: 0 / 5'
-                font_size: '30sp'
-                color: color_white
-            BrandedLabel:
-                id: score_label
-                text: 'Score: 0'
-                font_size: '30sp'
-                color: color_white
-
-        # Main countdown/feedback label, centered
-        BrandedLabel:
-            id: countdown_label
-            text: 'Prepare-se!'
-            font_size: '150sp'
-            bold: True
+            orientation: 'vertical'
+            size_hint: 0.8, 0.5
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            color: color_white
-            # Add scale property for animation
-            scale: 1.0
+            padding: dp(30)
+            canvas.before:
+                Color:
+                    rgba: color_light_gray
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(30)]
+            
+            BrandedLabel:
+                text: 'TEMPO'
+                font_size: '30sp'
+                size_hint_y: 0.25
+                valign: 'bottom'
+            
+            BrandedLabel:
+                id: chronometer_label
+                text: '00:00'
+                font_size: '160sp'
+                bold: True
+                size_hint_y: 0.5
 
-        # Reinforcing instruction label, initially hidden
-        BrandedLabel:
-            id: instruction_label
-            text: ''
-            font_size: '28sp'
-            pos_hint: {'center_x': 0.5, 'center_y': 0.25}
-            color: color_primary_green
-            opacity: 0
+            BrandedLabel:
+                id: remaining_label
+                text: 'Restantes: 10'
+                font_size: '25sp'
+                size_hint_y: 0.25
 
 <QuizGameScreen>:
     name: 'quiz_game'

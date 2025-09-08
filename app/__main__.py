@@ -18,6 +18,7 @@ Config.set('graphics', 'borderless', 1)       # Hides the window bar for a kiosk
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, FadeTransition
+from kivy.core.window import Window # <-- NEW IMPORT
 
 from app.ui.screens import (WelcomeScreen, InstructionsScreen, AgilityGameScreen,
                             QuizGameScreen, ScoreScreen, LeaderboardScreen)
@@ -40,11 +41,23 @@ class GameApp(App):
         sm.add_widget(ScoreScreen(name='score'))
         sm.add_widget(LeaderboardScreen(name='leaderboard'))
         
+        Window.bind(on_keyboard=self.on_key_press) # <-- BIND KEYBOARD
         # Instantiate the GameManager and pass it the screen manager
         self.game_manager = GameManager(sm)
         
         return sm
 
+    def on_key_press(self, window, key, scancode, codepoint, modifiers):
+        """Global keyboard listener."""
+        # 27 is the keycode for ESC - useful for exiting fullscreen during dev
+        if key == 27:
+            self.stop()
+            return True
+        # Check if 'q' is pressed
+        if codepoint == 'q':
+            self.game_manager.skip_agility_game()
+            return True
+    
     def on_stop(self):
         """This method is called when the application is closed."""
         print("Application is closing. Cleaning up resources.")

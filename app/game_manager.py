@@ -20,11 +20,13 @@ class GameManager:
         self.questions_for_round = []
 
         self.score = 0
-        self.total_agility_rounds = 5
-        self.current_agility_round = 0
+        # NEW/REPURPOSED Agility State
+        self.agility_buttons_to_press = 10 # Total buttons to hit
+        self.agility_buttons_remaining = self.agility_buttons_to_press
+        self.agility_start_time = 0
+        self.chronometer_event = None
         self.agility_in_progress = False
         self.target_led_index = -1
-        self.round_start_time = 0
         
         self.total_quiz_rounds = 3
         self.current_quiz_round = 0
@@ -36,87 +38,63 @@ class GameManager:
 
     def start_game(self):
         """Resets game state and starts the countdown for the agility game."""
-        self.am.play('start')
         self.score = 0
-        self.current_agility_round = 0
         self.current_quiz_round = 0
+        self.agility_buttons_remaining = self.agility_buttons_to_press # Reset counter
+        self.go_to_screen('instructions') # START AT INSTRUCTIONS
+        # self.start_countdown() # This is now called from proceed_from_instructions
+
+    def start_agility_game(self): # Formerly start_game
+        """This is now the method that starts the actual agility gameplay."""
+        self.am.play('start')
         self.go_to_screen('agility_game')
-        self.start_countdown()
-
-    def start_countdown(self, dt=None):
-        """Handles the 3, 2, 1 countdown and triggers GO animation."""
+        
+        # Update UI for the start of the round
         screen = self.sm.get_screen('agility_game')
-        screen.ids.countdown_label.text = 'Prepare-se!' # Set initial text in PT-BR
-        screen.ids.countdown_label.scale = 1.0 # Reset scale
-        screen.ids.instruction_label.opacity = 0 # Ensure instruction is hidden
-        countdown_val = 3
-        
-        def update_countdown(dt):
-            nonlocal countdown_val
-            if countdown_val > 0:
-                screen.ids.countdown_label.text = str(countdown_val)
-                self.am.play('start') # Play sound on each count
-                countdown_val -= 1
-            else:
-                screen.ids.countdown_label.text = 'VAI!'
-                self.am.play('submit') # Use a different sound for GO
+        screen.ids.remaining_label.text = f'Restantes: {self.agility_buttons_remaining}'
+        screen.ids.chronometer_label.text = '00:00'
 
-                # --- Punch-out Animation for "GO!" ---
-                anim = (Animation(scale=1.5, d=0.1) +
-                        Animation(scale=1.0, d=0.2, t='out_back'))
-                anim.start(screen.ids.countdown_label)
+        self.agility_start_time = time.perf_counter()
+        self.chronometer_event = Clock.schedule_interval(self.update_chronometer, 1/60) # Update 60fps
+        self.trigger_next_led()
 
-                # --- Fade-in the reinforcing instruction ---
-                screen.ids.instruction_label.text = 'APERTE O BOTÃO ACESO!'
-                Animation(opacity=1, d=0.3).start(screen.ids.instruction_label)
+    def update_chronometer(self, dt):
+        """Updates the chronometer label on screen."""
+        elapsed_time = time.perf_counter() - self.agility_start_time
+        seconds = int(elapsed_time)
+        milliseconds = int((elapsed_time * 100) % 100)
+        self.sm.get_screen('agility_game').ids.chronometer_label.text = f'{seconds:02}:{milliseconds:02}'
 
-                Clock.schedule_once(self.start_agility_round, 0.5)
-                return False # Stop the scheduled interval
-        
-        # Start countdown after a brief pause
-        Clock.schedule_once(lambda dt: Clock.schedule_interval(update_countdown, 1), 1.0)
-
-    def start_agility_round(self, dt=None):
-        """Starts a single round of the agility game."""
-        if self.current_agility_round >= self.total_agility_rounds:
-            self.end_agility_section()
-            return
-
-        self.current_agility_round += 1
-
-        screen = self.sm.get_screen('agility_game')
-        screen.ids.round_label.text = f'Rodada: {self.current_agility_round} / {self.total_agility_rounds}'
-        screen.ids.score_label.text = f'Pontos: {self.score}'
-        
-        # --- Hide the "GO!" text and instruction for the round ---
-        screen.ids.countdown_label.text = ''
-        screen.ids.instruction_label.opacity = 0
-
+    def trigger_next_led(self):
+        """Turns on a new random LED."""
         self.target_led_index = random.randint(0, len(self.hw.leds) - 1)
         self.hw.turn_on_led(self.target_led_index)
-        self.round_start_time = time.perf_counter()
         self.agility_in_progress = True
 
     def on_button_press(self, pressed_index):
-        """Callback for PHYSICAL button presses (Agility Game ONLY)."""
+        """Callback for the new chronometer-based game."""
         if not self.agility_in_progress: return
-        self.agility_in_progress = False
-        self.hw.turn_off_led(self.target_led_index)
         
         if pressed_index == self.target_led_index:
-            reaction_time = time.perf_counter() - self.round_start_time
-            points = max(0, 1000 - int(reaction_time * 1000))
-            self.score += points
+            self.agility_in_progress = False # Prevent multiple presses
+            self.hw.turn_off_led(self.target_led_index)
             self.am.play('correct')
-            print(f"Correct! Time: {reaction_time:.3f}s, Score: +{points}")
-        else:
-            self.am.play('wrong')
-            print(f"Wrong button! Expected {self.target_led_index}, got {pressed_index}.")
+            
+            self.agility_buttons_remaining -= 1
+            self.sm.get_screen('agility_game').ids.remaining_label.text = f'Restantes: {self.agility_buttons_remaining}'
 
-        # --- THIS IS THE CRITICAL CHANGE ---
-        # Schedule the next round to start after a brief delay.
-        # The start_agility_round function itself will now handle the logic of when to stop.
-        Clock.schedule_once(self.start_agility_round, 0.5)
+            if self.agility_buttons_remaining <= 0:
+                # GAME OVER
+                self.chronometer_event.cancel()
+                final_time = time.perf_counter() - self.agility_start_time
+                # Scoring: 20000 points minus 100 points per tenth of a second
+                self.score = max(0, 20000 - int(final_time * 1000))
+                print(f"Agility finished in {final_time:.2f}s. Score: {self.score}")
+                self.end_agility_section()
+            else:
+                # Trigger the next button
+                self.trigger_next_led()
+        # If wrong button is pressed, we do nothing. The player must find the right one.
 
     def end_agility_section(self):
         """Called after agility. Prepares and shows instructions for the QUIZ game."""
@@ -246,10 +224,19 @@ class GameManager:
         )
         self.go_to_screen('instructions')
 
+    def skip_agility_game(self):
+        """Ends the agility game prematurely, called by 'q' key."""
+        if self.sm.current == 'agility_game':
+            print("Agility game skipped by user.")
+            if self.chronometer_event:
+                self.chronometer_event.cancel()
+            self.score = 0 # Set agility score to 0
+            self.end_agility_section()
+    
     def proceed_from_instructions(self):
         """Called by the instruction screen button. Acts based on the current state."""
         if self.instruction_state == 'agility':
-            self.start_game()
+            self.start_agility_game()
         elif self.instruction_state == 'quiz':
             self.start_quiz_section()
 
