@@ -178,18 +178,29 @@ class GameManager:
         self.quiz_in_progress = True
         self.current_quiz_round += 1
 
-    def check_answer(self, selected_button_widget):
+    def check_answer_by_id(self, button_id):
         """
-        Orchestrates the answer checking and delegates the feedback presentation.
-        This is the central logic hub for a quiz round.
+        NOVA SOLUÇÃO: Recebe o ID do botão diretamente, contornando bug do Kivy.
         """
         if not self.quiz_in_progress: return
         self.quiz_in_progress = False
 
         screen = self.sm.get_screen('quiz_game')
         correct_answer = self.current_question_data['correct_answer']
-        selected_answer = selected_button_widget.text
+        
+        # Obter o botão correto pelo ID
+        selected_button = getattr(screen.ids, button_id)
+        selected_answer = selected_button.text
         is_correct = (selected_answer == correct_answer)
+
+        print(f"\n=== DEBUG SOLUÇÃO POR ID ===")
+        print(f"ID recebido: {button_id}")
+        print(f"Botão selecionado: {selected_button}")
+        print(f"Texto do botão: '{selected_answer}'")
+        print(f"Posição do botão: {selected_button.pos}")
+        print(f"Resposta correta: '{correct_answer}'")
+        print(f"Está correto: {is_correct}")
+        print("=== END DEBUG ===\n")
 
         # --- Core Logic ---
         if is_correct:
@@ -201,15 +212,30 @@ class GameManager:
             print("Quiz answer: Incorrect!")
 
         # --- Delegation to Presentation Layer ---
-        # Command the screen to show the comprehensive feedback.
         screen.show_feedback(
             is_correct=is_correct,
             correct_answer_text=correct_answer,
-            selected_widget=selected_button_widget
+            selected_widget=selected_button
         )
 
         # Schedule the next round, allowing the player 2.5 seconds to absorb the feedback.
         Clock.schedule_once(self.start_quiz_round, 2.5)
+
+    # Manter método antigo para compatibilidade (caso seja chamado de outro lugar)
+    def check_answer(self, selected_button_widget):
+        """Método legado - redireciona para nova implementação"""
+        # Tentar identificar o ID pelo widget (fallback)
+        screen = self.sm.get_screen('quiz_game')
+        if selected_button_widget == screen.ids.option_a:
+            self.check_answer_by_id('option_a')
+        elif selected_button_widget == screen.ids.option_b:
+            self.check_answer_by_id('option_b')
+        elif selected_button_widget == screen.ids.option_c:
+            self.check_answer_by_id('option_c')
+        elif selected_button_widget == screen.ids.option_d:
+            self.check_answer_by_id('option_d')
+        else:
+            print("ERRO: Não foi possível identificar o botão clicado")
 
     def end_game(self):
         """Called after the last quiz round. Transitions to the Score screen."""

@@ -285,16 +285,16 @@
             # This is more powerful as it gives the logic full context.
             QuizButton:
                 id: option_a
-                on_press: app.game_manager.check_answer(self)
+                on_press: app.game_manager.check_answer_by_id('option_a')
             QuizButton:
                 id: option_b
-                on_press: app.game_manager.check_answer(self)
+                on_press: app.game_manager.check_answer_by_id('option_b')
             QuizButton:
                 id: option_c
-                on_press: app.game_manager.check_answer(self)
+                on_press: app.game_manager.check_answer_by_id('option_c')
             QuizButton:
                 id: option_d
-                on_press: app.game_manager.check_answer(self)
+                on_press: app.game_manager.check_answer_by_id('option_d')
 
 <ScoreScreen>:
     name: 'score'
