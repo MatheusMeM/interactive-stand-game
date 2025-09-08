@@ -29,6 +29,23 @@
             size: self.size
             radius: [dp(30)] # The radius for the rounded corners. dp(20) is a good starting point.
 
+# Quiz-specific button that allows color control from Python
+<QuizButton>:
+    font_name: 'Roboto'
+    background_color: 0,0,0,0 # Make the default background transparent
+    color: color_primary_blue
+    font_size: '70sp'
+    bold: True
+    background_normal: ''
+
+    canvas.before:
+        Color:
+            rgba: self.button_bg_color
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(30)]
+
 
 <BrandedLabel@Label>:
     font_name: 'Roboto'
@@ -266,16 +283,16 @@
             
             # Note: on_press now passes the button widget itself (self).
             # This is more powerful as it gives the logic full context.
-            BrandedButton:
+            QuizButton:
                 id: option_a
                 on_press: app.game_manager.check_answer(self)
-            BrandedButton:
+            QuizButton:
                 id: option_b
                 on_press: app.game_manager.check_answer(self)
-            BrandedButton:
+            QuizButton:
                 id: option_c
                 on_press: app.game_manager.check_answer(self)
-            BrandedButton:
+            QuizButton:
                 id: option_d
                 on_press: app.game_manager.check_answer(self)
 

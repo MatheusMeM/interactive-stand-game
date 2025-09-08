@@ -1,13 +1,18 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.properties import StringProperty
+from kivy.uix.button import Button
+from kivy.properties import StringProperty, ColorProperty
 
 # Create a custom widget for a single leaderboard entry
 class LeaderboardEntry(BoxLayout):
     rank_text = StringProperty('')
     name_text = StringProperty('')
     score_text = StringProperty('')
+
+# Custom button for quiz with controllable background color
+class QuizButton(Button):
+    button_bg_color = ColorProperty((216/255, 206/255, 205/255, 1))  # Default light gray
 
 class WelcomeScreen(Screen):
     pass
@@ -25,50 +30,40 @@ class AgilityGameScreen(Screen):
 class QuizGameScreen(Screen):
     def display_question(self, question_data):
         """
-        Populates the screen widgets and resets their state for a new round.
-        This is a command from the GameManager.
+        Populates the screen widgets for a new round.
+        Buttons are set to the new default light gray color.
         """
-        # Reset the dialog box to show the new question
         self.ids.question_label.text = question_data['question']
         
         options = question_data['options']
         answer_buttons = [self.ids.option_a, self.ids.option_b, self.ids.option_c, self.ids.option_d]
         
-        # Prepare buttons for the new round
         for i, button in enumerate(answer_buttons):
             button.text = options[i]
             button.disabled = False
-            # Reset button color to the default brand green using the ColorProperty
-            button.button_color = (134/255, 188/255, 37/255, 1)
+            # --- NEW DEFAULT STATE: Light Gray ---
+            # This color is defined in screens.kv as color_light_gray
+            button.button_bg_color = (216/255, 206/255, 205/255, 1)
 
     def show_feedback(self, is_correct, correct_answer_text, selected_widget):
         """
-        Executes the full feedback sequence based on the game logic's outcome.
-        This method controls all visual and textual feedback on this screen.
+        Executes the feedback sequence.
+        All buttons turn dark gray after any selection is made.
         """
-        # --- Textual Feedback ---
         if is_correct:
             self.ids.question_label.text = "Correto!"
         else:
             self.ids.question_label.text = f"Incorreto!\nA resposta correta era: {correct_answer_text}"
 
-        # --- Visual Button Feedback ---
         answer_buttons = [self.ids.option_a, self.ids.option_b, self.ids.option_c, self.ids.option_d]
         
         for button in answer_buttons:
-            # Rule 1: Disable all buttons after a choice is made to prevent multiple inputs.
+            # Rule 1: Disable all buttons post-interaction.
             button.disabled = True
             
-            if button.text == correct_answer_text:
-                # Rule 2: The correct answer is always highlighted in green.
-                button.button_color = (30/255, 180/255, 30/255, 1) # Feedback Green
-            elif button == selected_widget:
-                # Rule 3: If this is the selected widget AND it's wrong, it turns red.
-                # (The `is_correct` check is implicitly handled by the first `if`).
-                button.button_color = (200/255, 20/255, 20/255, 1) # Feedback Red
-            else:
-                # Rule 4: All other buttons become a neutral gray.
-                button.button_color = (0.5, 0.5, 0.5, 1) # Disabled Gray
+            # --- NEW FEEDBACK STATE: All buttons become Dark Gray ---
+            # This color is defined in screens.kv as color_dark_gray
+            button.button_bg_color = (137/255, 137/255, 137/255, 1)
 
 class ScoreScreen(Screen):
     pass
