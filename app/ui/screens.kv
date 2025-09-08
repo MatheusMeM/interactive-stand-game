@@ -3,18 +3,32 @@
 
 # Define brand colors for reusability
 #:set color_primary_blue (0/255, 64/255, 119/255, 1)      # #004077
+#:set color_secondary_blue (0/255, 105/255, 180/255, 1)      # #004077
 #:set color_primary_green (134/255, 188/255, 37/255, 1)   # #86BC25
+#:set color_secondary_green (82/255, 174/255, 50/255, 1)   # #86BC25
 #:set color_white (1, 1, 1, 1)
 #:set color_dark_gray (137/255, 137/255, 137/255, 1) # rgba(137, 137, 137, 1)
+#:set color_light_gray (216/255, 206/255, 205/255, 1) # rgba(216, 206, 205, 1)
+#:set screen_padding dp(60)
 
 # Base styles for widgets to maintain consistency
 <BrandedButton@Button>:
     font_name: 'Roboto'
-    background_color: color_primary_green
+    background_color: 0,0,0,0 # Make the default background transparent
     color: color_primary_blue
-    font_size: '80sp'
+    font_size: '70sp'
     bold: True
     background_normal: ''
+
+    canvas.before:
+        Color:
+            # Use the button's state to change color on press
+            rgba: color_primary_green if self.state == 'normal' else color_secondary_green
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(30)] # The radius for the rounded corners. dp(20) is a good starting point.
+
 
 <BrandedLabel@Label>:
     font_name: 'Roboto'
@@ -61,16 +75,49 @@
         allow_stretch: True
         keep_ratio: False
         opacity: 0.15
+
+    # Main layout that respects the global screen padding
     BoxLayout:
         orientation: 'vertical'
-        padding: 50
-        spacing: 30
-        BrandedLabel:
-            text: 'Get Ready!\n\nPress the illuminated button as fast as you can.\n\nThen, test your knowledge in the quiz!'
-            font_size: '30sp'
-        BrandedButton:
-            text: 'START GAME'
-            on_press: app.game_manager.start_game()
+        padding: screen_padding
+        spacing: dp(25)
+
+        # --- TOP 5/8: The Dialog Box ---
+        BoxLayout:
+            size_hint_y: 0.625 # This is 5/8
+            padding: dp(30)
+            canvas.before:
+                Color:
+                    rgba: color_light_gray
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(30)]
+            BrandedLabel:
+                text: '[b]Como Jogar[/b]\n\n1. Agilidade: Pressione o botão físico que acender.\n\n2. Quiz: Responda as perguntas na tela.'
+                markup: True
+                font_size: '32sp'
+                text_size: self.width, None # Enable text wrapping
+                valign: 'center'
+                halign: 'left'
+
+        # --- BOTTOM 3/8: The Start Button and Logo ---
+        BoxLayout:
+            size_hint_y: 0.375 # This is 3/8
+            orientation: 'vertical'
+            spacing: dp(20)
+            
+            BrandedButton:
+                text: 'COMEÇAR' # Text updated to Portuguese
+                size_hint: 1, 0.7
+                on_press: app.game_manager.start_game()
+            
+            Image:
+                source: 'assets/images/ibp_logo.png'
+                size_hint: 1, 0.3
+                allow_stretch: True
+                keep_ratio: True
+
 
 <AgilityGameScreen>:
     name: 'agility_game'
