@@ -169,12 +169,14 @@
 
     # Use a FloatLayout to center the dialog box
     FloatLayout:
-        # The dialog box itself
+        # The main dialog box (initially invisible during countdown)
         BoxLayout:
+            id: game_layout
             orientation: 'vertical'
             size_hint: 0.8, 0.5
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             padding: dp(30)
+            opacity: 0 # <-- Starts hidden
             canvas.before:
                 Color:
                     rgba: color_light_gray
@@ -182,25 +184,36 @@
                     pos: self.pos
                     size: self.size
                     radius: [dp(30)]
-            
+            # ... (chronometer labels are unchanged) ...
             BrandedLabel:
                 text: 'TEMPO'
                 font_size: '30sp'
-                size_hint_y: 0.25
+                size_hint_y: 0.30
                 valign: 'bottom'
             
             BrandedLabel:
                 id: chronometer_label
                 text: '00:00'
-                font_size: '160sp'
+                font_size: '190sp'
                 bold: True
                 size_hint_y: 0.5
 
             BrandedLabel:
                 id: remaining_label
                 text: 'Restantes: 10'
-                font_size: '25sp'
+                font_size: '40sp'
                 size_hint_y: 0.25
+
+        # --- NEW: Countdown Overlay ---
+        BrandedLabel:
+            id: countdown_overlay
+            text: ''
+            font_size: '200sp'
+            bold: True
+            color: color_primary_blue
+            # This label covers the whole screen
+            size_hint: 1, 1
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <QuizGameScreen>:
     name: 'quiz_game'

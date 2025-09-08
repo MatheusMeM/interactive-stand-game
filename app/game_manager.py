@@ -33,6 +33,7 @@ class GameManager:
         self.current_question_data = None
         self.quiz_in_progress = False
         self.instruction_state = None # <-- NEW state variable
+        self.countdown_active = False  # Guard flag to prevent multiple countdowns
 
         print("GameManager initialized with HardwareController and DataManager.")
 
@@ -44,10 +45,55 @@ class GameManager:
         self.go_to_screen('instructions') # START AT INSTRUCTIONS
         # self.start_countdown() # This is now called from proceed_from_instructions
 
-    def start_agility_game(self): # Formerly start_game
-        """This is now the method that starts the actual agility gameplay."""
-        self.am.play('start')
+    def start_countdown(self):
+        """Handles the 3, 2, 1 countdown with a single audio cue at the start."""
+        if self.countdown_active:
+            return  # Prevent multiple countdowns from starting
+        self.countdown_active = True
+        
         self.go_to_screen('agility_game')
+        screen = self.sm.get_screen('agility_game')
+        
+        # Ensure the main game UI is hidden and the overlay is ready
+        screen.ids.game_layout.opacity = 0
+        overlay = screen.ids.countdown_overlay
+        
+        # --- NEW, SIMPLIFIED LOGIC ---
+        def update_text(number_or_go, dt):
+            """Callback to update the text on screen."""
+            overlay.text = str(number_or_go)
+
+        def finish_countdown(dt):
+            """Fades out the overlay and starts the game."""
+            # Fade out the overlay and fade in the game UI
+            Animation(opacity=0, d=0.3).start(overlay)
+            
+            # Create the fade-in animation with a callback
+            fade_in_anim = Animation(opacity=1, d=0.3)
+            
+            def on_fade_complete(animation, widget):
+                # Start the actual game logic after animation completes
+                self.start_agility_game()
+                self.countdown_active = False # Reset the flag
+            
+            fade_in_anim.bind(on_complete=on_fade_complete)
+            fade_in_anim.start(screen.ids.game_layout)
+
+        # --- SEQUENCE OF EVENTS ---
+        # 1. Show '3' and play the single countdown sound immediately.
+        overlay.text = '3'
+        self.am.play('start')
+
+        # 2. Schedule the visual updates for '2' and '1'.
+        Clock.schedule_once(lambda dt: update_text('2', dt), 1.0)
+        Clock.schedule_once(lambda dt: update_text('1', dt), 2.0)
+        
+        # 3. Schedule the final transition to start the game.
+        Clock.schedule_once(finish_countdown, 2.3) # A brief moment after "1"
+
+    def start_agility_game(self, dt=None): # This method is now simpler
+        """This method now ONLY starts the actual agility gameplay."""
+        self.agility_buttons_remaining = self.agility_buttons_to_press
         
         # Update UI for the start of the round
         screen = self.sm.get_screen('agility_game')
@@ -55,7 +101,7 @@ class GameManager:
         screen.ids.chronometer_label.text = '00:00'
 
         self.agility_start_time = time.perf_counter()
-        self.chronometer_event = Clock.schedule_interval(self.update_chronometer, 1/60) # Update 60fps
+        self.chronometer_event = Clock.schedule_interval(self.update_chronometer, 1/60)
         self.trigger_next_led()
 
     def update_chronometer(self, dt):
@@ -236,7 +282,8 @@ class GameManager:
     def proceed_from_instructions(self):
         """Called by the instruction screen button. Acts based on the current state."""
         if self.instruction_state == 'agility':
-            self.start_agility_game()
+            # --- CHANGED: Don't start the game directly, start the countdown ---
+            self.start_countdown()
         elif self.instruction_state == 'quiz':
             self.start_quiz_section()
 
