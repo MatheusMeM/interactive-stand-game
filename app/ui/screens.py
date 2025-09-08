@@ -47,8 +47,9 @@ class QuizGameScreen(Screen):
 
     def show_feedback(self, is_correct, correct_answer_text, selected_widget):
         """
-        Executes the feedback sequence.
-        All buttons turn dark gray after any selection is made.
+        Executes the feedback sequence with visual indicators.
+        - Correct answer button: Always green
+        - All other buttons: Dark gray
         """
         if is_correct:
             self.ids.question_label.text = "Correto!"
@@ -58,12 +59,16 @@ class QuizGameScreen(Screen):
         answer_buttons = [self.ids.option_a, self.ids.option_b, self.ids.option_c, self.ids.option_d]
         
         for button in answer_buttons:
-            # Rule 1: Disable all buttons post-interaction.
+            # Rule 1: Disable all buttons post-interaction
             button.disabled = True
             
-            # --- NEW FEEDBACK STATE: All buttons become Dark Gray ---
-            # This color is defined in screens.kv as color_dark_gray
-            button.button_bg_color = (137/255, 137/255, 137/255, 1)
+            # Rule 2: Color feedback
+            if button.text == correct_answer_text:
+                # Correct answer is always GREEN
+                button.button_bg_color = (134/255, 188/255, 37/255, 1)  # color_primary_green
+            else:
+                # All other buttons become dark gray
+                button.button_bg_color = (137/255, 137/255, 137/255, 1)  # color_dark_gray
 
 class ScoreScreen(Screen):
     pass
