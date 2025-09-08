@@ -47,6 +47,12 @@ class GameManager:
         self.last_button_press_time = 0
         self.button_press_cooldown = 0.3  # 300ms between physical button presses
         self.last_button_pressed = -1  # Track which button was last pressed
+        
+        # Idle animation and timeout system
+        self.idle_animation_event = None
+        self.idle_timeout_event = None
+        self.idle_led_index = 0  # Current LED in idle animation
+        self.is_idle_mode = False
 
         print("GameManager initialized with HardwareController and DataManager.")
 
@@ -216,6 +222,12 @@ class GameManager:
             button_text='COMEÇAR QUIZ'
         )
         self.go_to_screen('instructions')
+        
+        # Start timeout for quiz instructions
+        self.start_quiz_instructions_timeout()
+        
+        # Start timeout for quiz instructions
+        self.start_quiz_instructions_timeout()
     
     def start_quiz_section(self):
         """Prepares the quiz data and transitions to the quiz screen."""
@@ -254,6 +266,9 @@ class GameManager:
         screen.display_question(self.current_question_data)
         self.quiz_in_progress = True
         self.current_quiz_round += 1
+        
+        # Start timeout for this quiz question
+        self.start_quiz_question_timeout()
 
     def check_answer_by_id(self, button_id):
         """
@@ -261,6 +276,11 @@ class GameManager:
         """
         if not self.quiz_in_progress: return
         self.quiz_in_progress = False
+        
+        # Cancel quiz question timeout since user interacted
+        if self.idle_timeout_event:
+            self.idle_timeout_event.cancel()
+            self.idle_timeout_event = None
 
         screen = self.sm.get_screen('quiz_game')
         correct_answer = self.current_question_data['correct_answer']
@@ -451,6 +471,9 @@ class GameManager:
         
         # Pass filtered scores to the leaderboard display
         screen.update_leaderboard(today_scores, player_name)
+        
+        # Start 1-minute timeout for automatic return to welcome
+        self.start_leaderboard_timeout()
 
     def cleanup(self):
         """Should be called when the app closes."""
@@ -464,6 +487,9 @@ class GameManager:
 
     def show_instructions(self):
         """Prepares and shows the instructions for the AGILITY game."""
+        # Stop idle animation when user starts playing
+        self.stop_idle_animation()
+        
         self.instruction_state = 'agility'
         screen = self.sm.get_screen('instructions')
         screen.update_content(
@@ -484,6 +510,11 @@ class GameManager:
     
     def proceed_from_instructions(self):
         """Called by the instruction screen button. Acts based on the current state."""
+        # Cancel any active timeout since user interacted
+        if self.idle_timeout_event:
+            self.idle_timeout_event.cancel()
+            self.idle_timeout_event = None
+            
         if self.instruction_state == 'agility':
             # --- CHANGED: Don't start the game directly, start the countdown ---
             self.start_countdown()
@@ -493,6 +524,9 @@ class GameManager:
     def return_to_welcome(self):
         """Returns to the welcome screen and resets the game state."""
         print("DEBUG: Returning to welcome, resetting all game state...")
+        
+        # Stop any idle animation and timeout
+        self.stop_idle_animation()
         
         self.score = 0
         self.current_agility_round = 0
@@ -536,3 +570,107 @@ class GameManager:
         
         self.go_to_screen('welcome')
         print("DEBUG: Welcome screen transition complete")
+    
+    def start_idle_animation(self):
+        """Starts the idle LED animation (clockwise sequence 1-12)."""
+        if self.idle_animation_event:
+            self.idle_animation_event.cancel()
+        
+        self.is_idle_mode = True
+        self.idle_led_index = 0
+        print("DEBUG: Starting idle animation")
+        
+        # Start the animation loop
+        self.idle_animation_event = Clock.schedule_interval(self.update_idle_animation, 0.5)  # 500ms per LED
+    
+    def update_idle_animation(self, dt):
+        """Updates the loading circle animation - 9 LEDs on, 3 LEDs off moving clockwise."""
+        if not self.is_idle_mode:
+            return False  # Stop the animation
+        
+        # Turn off all LEDs first
+        self.hw.turn_off_all_leds()
+        
+        # Create loading circle pattern: 3 consecutive LEDs OFF, others ON
+        total_leds = len(self.hw.leds)  # Should be 12
+        off_leds_count = 3  # 3 LEDs will be off
+        
+        # Calculate which 3 LEDs should be OFF (moving window)
+        for i in range(total_leds):
+            # Check if this LED should be in the OFF window
+            led_is_in_off_window = False
+            for j in range(off_leds_count):
+                off_position = (self.idle_led_index + j) % total_leds
+                if i == off_position:
+                    led_is_in_off_window = True
+                    break
+            
+            # Turn on LED if it's NOT in the off window
+            if not led_is_in_off_window:
+                self.hw.turn_on_led(i)
+        
+        # Move the off window one position clockwise for next frame
+        self.idle_led_index = (self.idle_led_index + 1) % total_leds
+        
+        print(f"DEBUG: Loading animation - OFF window at positions: {[(self.idle_led_index + i - 1) % total_leds for i in range(off_leds_count)]}")
+        
+        return True  # Continue animation
+    
+    def stop_idle_animation(self):
+        """Stops the idle LED animation and turns off all LEDs."""
+        if self.idle_animation_event:
+            self.idle_animation_event.cancel()
+            self.idle_animation_event = None
+        
+        if self.idle_timeout_event:
+            self.idle_timeout_event.cancel()
+            self.idle_timeout_event = None
+        
+        self.is_idle_mode = False
+        self.hw.turn_off_all_leds()
+        print("DEBUG: Idle animation stopped")
+    
+    def start_leaderboard_timeout(self):
+        """Starts 1-minute timeout for automatic return to welcome screen."""
+        if self.idle_timeout_event:
+            self.idle_timeout_event.cancel()
+        
+        print("DEBUG: Starting 1-minute leaderboard timeout")
+        # Schedule timeout for 1 minute (60 seconds)
+        self.idle_timeout_event = Clock.schedule_once(self.on_leaderboard_timeout, 15.0)
+    
+    def on_leaderboard_timeout(self, dt):
+        """Called when leaderboard timeout expires - returns to welcome with idle animation."""
+        print("DEBUG: Leaderboard timeout expired, returning to welcome")
+        self.return_to_welcome()
+        # Start idle animation after returning to welcome
+        Clock.schedule_once(lambda dt: self.start_idle_animation(), 0.5)
+    
+    def start_quiz_instructions_timeout(self):
+        """Starts 15-second timeout for quiz instructions screen."""
+        if self.idle_timeout_event:
+            self.idle_timeout_event.cancel()
+        
+        print("DEBUG: Starting 15-second quiz instructions timeout")
+        self.idle_timeout_event = Clock.schedule_once(self.on_quiz_instructions_timeout, 15.0)
+    
+    def on_quiz_instructions_timeout(self, dt):
+        """Called when quiz instructions timeout expires."""
+        print("DEBUG: Quiz instructions timeout expired, returning to welcome")
+        self.return_to_welcome()
+        Clock.schedule_once(lambda dt: self.start_idle_animation(), 0.5)
+    
+    def start_quiz_question_timeout(self):
+        """Starts 15-second timeout for each quiz question."""
+        if self.idle_timeout_event:
+            self.idle_timeout_event.cancel()
+        
+        print("DEBUG: Starting 15-second quiz question timeout")
+        self.idle_timeout_event = Clock.schedule_once(self.on_quiz_question_timeout, 15.0)
+    
+    def on_quiz_question_timeout(self, dt):
+        """Called when quiz question timeout expires."""
+        print("DEBUG: Quiz question timeout expired, returning to welcome")
+        self.quiz_in_progress = False  # Stop quiz
+        self.return_to_welcome()
+        Clock.schedule_once(lambda dt: self.start_idle_animation(), 0.5)
