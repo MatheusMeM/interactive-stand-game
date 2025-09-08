@@ -41,15 +41,38 @@ class HardwareController:
             self.leds[index].off()
 
     def turn_off_all_leds(self):
-        """Turns off all LEDs."""
-        for led in self.leds:
-            led.off()
+        """Turns off all LEDs safely, checking if they're still open."""
+        for i, led in enumerate(self.leds):
+            try:
+                if not led.closed:
+                    led.off()
+            except Exception as e:
+                print(f"Warning: Could not turn off LED {i}: {e}")
 
     def cleanup(self):
-        """Releases all GPIO resources."""
-        self.turn_off_all_leds()
-        for button in self.buttons:
-            button.close()
-        for led in self.leds:
-            led.close()
+        """Releases all GPIO resources safely."""
+        print("Cleaning up GPIO resources...")
+        
+        # Safely turn off all LEDs
+        try:
+            self.turn_off_all_leds()
+        except Exception as e:
+            print(f"Warning during LED cleanup: {e}")
+        
+        # Safely close all buttons
+        for i, button in enumerate(self.buttons):
+            try:
+                if not button.closed:
+                    button.close()
+            except Exception as e:
+                print(f"Warning: Could not close button {i}: {e}")
+        
+        # Safely close all LEDs
+        for i, led in enumerate(self.leds):
+            try:
+                if not led.closed:
+                    led.close()
+            except Exception as e:
+                print(f"Warning: Could not close LED {i}: {e}")
+        
         print("GPIO resources cleaned up.")

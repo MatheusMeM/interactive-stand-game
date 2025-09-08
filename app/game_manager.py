@@ -42,6 +42,11 @@ class GameManager:
         self.virtual_keyboard_text = ""  # Internal text state
         self.last_key_press_time = 0
         self.key_press_cooldown = 0.15  # 150ms between key presses
+        
+        # Physical button debounce for agility game
+        self.last_button_press_time = 0
+        self.button_press_cooldown = 0.3  # 300ms between physical button presses
+        self.last_button_pressed = -1  # Track which button was last pressed
 
         print("GameManager initialized with HardwareController and DataManager.")
 
@@ -148,8 +153,25 @@ class GameManager:
         self.agility_in_progress = True
 
     def on_button_press(self, pressed_index):
-        """Callback for the new chronometer-based game."""
-        if not self.agility_in_progress: return
+        """Callback for the new chronometer-based game with debounce protection."""
+        if not self.agility_in_progress:
+            return
+        
+        # Debounce protection for physical buttons
+        current_time = time.perf_counter()
+        time_since_last_press = current_time - self.last_button_press_time
+        
+        # Check if this is a debounce (same button pressed too quickly)
+        if (time_since_last_press < self.button_press_cooldown and
+            self.last_button_pressed == pressed_index):
+            print(f"DEBUG: Button {pressed_index} debounced (too fast: {time_since_last_press:.3f}s)")
+            return
+        
+        # Update debounce tracking
+        self.last_button_press_time = current_time
+        self.last_button_pressed = pressed_index
+        
+        print(f"DEBUG: Button {pressed_index} pressed (target: {self.target_led_index})")
         
         if pressed_index == self.target_led_index:
             self.agility_in_progress = False # Prevent multiple presses
@@ -157,7 +179,14 @@ class GameManager:
             self.am.play('correct')
             
             self.agility_buttons_remaining -= 1
-            self.sm.get_screen('agility_game').ids.remaining_label.text = f'Restantes: {self.agility_buttons_remaining}'
+            # Schedule UI update on main thread
+            Clock.schedule_once(
+                lambda dt: setattr(
+                    self.sm.get_screen('agility_game').ids.remaining_label,
+                    'text',
+                    f'Restantes: {self.agility_buttons_remaining}'
+                ), 0
+            )
 
             if self.agility_buttons_remaining <= 0:
                 # GAME OVER
@@ -166,10 +195,13 @@ class GameManager:
                 # CONFIGURABLE Scoring: max score minus penalty per millisecond
                 self.score = max(0, AGILITY_MAX_SCORE - int(final_time * 1000 * AGILITY_SCORE_PENALTY_PER_MS))
                 print(f"Agility finished in {final_time:.2f}s. Score: {self.score} (Max: {AGILITY_MAX_SCORE}, Penalty: {AGILITY_SCORE_PENALTY_PER_MS}/ms)")
-                self.end_agility_section()
+                # Schedule UI transition on main thread
+                Clock.schedule_once(lambda dt: self.end_agility_section(), 0)
             else:
                 # Trigger the next button
                 self.trigger_next_led()
+        else:
+            print(f"DEBUG: Wrong button {pressed_index} pressed, target was {self.target_led_index}")
         # If wrong button is pressed, we do nothing. The player must find the right one.
 
     def end_agility_section(self):
