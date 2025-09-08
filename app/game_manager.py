@@ -48,33 +48,52 @@ class GameManager:
     def start_countdown(self):
         """Handles the 3, 2, 1 countdown with a single audio cue at the start."""
         if self.countdown_active:
+            print("DEBUG: Countdown already active, skipping...")
             return  # Prevent multiple countdowns from starting
         self.countdown_active = True
+        print("DEBUG: Starting countdown sequence...")
         
         self.go_to_screen('agility_game')
         screen = self.sm.get_screen('agility_game')
         
-        # Ensure the main game UI is hidden and the overlay is ready
-        screen.ids.game_layout.opacity = 0
+        # CRITICAL FIX: Reset overlay state completely before starting
         overlay = screen.ids.countdown_overlay
         
-        # --- NEW, SIMPLIFIED LOGIC ---
+        # Cancel any existing animations on the overlay to prevent conflicts
+        Animation.cancel_all(overlay)
+        Animation.cancel_all(screen.ids.game_layout)
+        
+        # Reset overlay to fully visible and ready state
+        overlay.opacity = 1.0
+        overlay.text = ''
+        print(f"DEBUG: Overlay reset - opacity: {overlay.opacity}, text: '{overlay.text}'")
+        
+        # Ensure the main game UI is hidden and ready
+        screen.ids.game_layout.opacity = 0
+        
+        # --- CORRECTED LOGIC WITH PROPER STATE MANAGEMENT ---
         def update_text(number_or_go, dt):
             """Callback to update the text on screen."""
             overlay.text = str(number_or_go)
+            print(f"DEBUG: Countdown text updated to '{overlay.text}', overlay opacity: {overlay.opacity}")
 
         def finish_countdown(dt):
             """Fades out the overlay and starts the game."""
+            print("DEBUG: Finishing countdown, starting fade animations...")
+            
             # Fade out the overlay and fade in the game UI
-            Animation(opacity=0, d=0.3).start(overlay)
+            fade_out_anim = Animation(opacity=0, d=0.3)
+            fade_out_anim.start(overlay)
             
             # Create the fade-in animation with a callback
             fade_in_anim = Animation(opacity=1, d=0.3)
             
             def on_fade_complete(animation, widget):
+                print("DEBUG: Fade animation complete, starting agility game...")
                 # Start the actual game logic after animation completes
                 self.start_agility_game()
                 self.countdown_active = False # Reset the flag
+                print("DEBUG: Countdown sequence completed, flag reset")
             
             fade_in_anim.bind(on_complete=on_fade_complete)
             fade_in_anim.start(screen.ids.game_layout)
@@ -83,6 +102,7 @@ class GameManager:
         # 1. Show '3' and play the single countdown sound immediately.
         overlay.text = '3'
         self.am.play('start')
+        print("DEBUG: Countdown '3' displayed, sound played")
 
         # 2. Schedule the visual updates for '2' and '1'.
         Clock.schedule_once(lambda dt: update_text('2', dt), 1.0)
@@ -354,6 +374,8 @@ class GameManager:
 
     def return_to_welcome(self):
         """Returns to the welcome screen and resets the game state."""
+        print("DEBUG: Returning to welcome, resetting all game state...")
+        
         self.score = 0
         self.current_agility_round = 0
         self.current_quiz_round = 0
@@ -373,7 +395,26 @@ class GameManager:
             self.chronometer_event.cancel()
             self.chronometer_event = None
             
+        # CRITICAL FIX: Reset countdown overlay state for next game
+        try:
+            agility_screen = self.sm.get_screen('agility_game')
+            overlay = agility_screen.ids.countdown_overlay
+            
+            # Cancel any pending animations
+            Animation.cancel_all(overlay)
+            Animation.cancel_all(agility_screen.ids.game_layout)
+            
+            # Reset overlay to initial state
+            overlay.opacity = 1.0
+            overlay.text = ''
+            agility_screen.ids.game_layout.opacity = 0
+            
+            print("DEBUG: Countdown overlay state reset for next game")
+        except Exception as e:
+            print(f"DEBUG: Error resetting overlay state: {e}")
+            
         # Turn off all LEDs
         self.hw.turn_off_all_leds()
         
         self.go_to_screen('welcome')
+        print("DEBUG: Welcome screen transition complete")
