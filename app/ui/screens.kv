@@ -331,80 +331,216 @@
                     pos: self.pos
                     size: self.size
                     radius: [dp(30)]
-            BoxLayout:
-                orientation: 'vertical'
-                spacing: dp(20)
+            # Use AnchorLayout to center all content vertically
+            AnchorLayout:
+                anchor_y: 'center'
                 
-                BrandedLabel:
-                    text: 'Parabéns!'
-                    font_size: '60sp'
-                    bold: True
-                    size_hint_y: None
-                    height: self.texture_size[1]
-                    halign: 'center'
-
-                BrandedLabel:
-                    id: final_score_label
-                    text: 'Sua Pontuação Final: 0'
-                    font_size: '45sp'
-                    bold: True
-                    size_hint_y: None
-                    height: self.texture_size[1]
-                    halign: 'center'
-
-                # Name input section
+                # Content container
                 BoxLayout:
                     orientation: 'vertical'
-                    spacing: dp(10)
+                    spacing: dp(20)
                     size_hint_y: None
-                    height: dp(120)
-
+                    height: self.minimum_height  # Only take up needed space
+                    
+                    # Centralized congratulations text
                     BrandedLabel:
-                        text: 'Digite suas iniciais:'
-                        font_size: '35sp'
+                        text: 'Parabéns!'
+                        font_size: '60sp'
+                        bold: True
                         size_hint_y: None
-                        height: dp(40)
+                        height: self.texture_size[1]
                         halign: 'center'
-
-                    TextInput:
-                        id: name_input
-                        hint_text: 'SUAS INICIAIS'
-                        font_name: 'Roboto'
-                        font_size: '40sp'
-                        multiline: False
-                        readonly: False
-                        halign: 'center'
+                        valign: 'middle'
+                        text_size: self.width, None
+    
+                    # Centralized score text
+                    BrandedLabel:
+                        id: final_score_label
+                        text: 'Sua Pontuação Final: 0'
+                        font_size: '45sp'
+                        bold: True
                         size_hint_y: None
-                        height: dp(70)
-                        background_color: color_white
-                        foreground_color: color_primary_blue
-                        cursor_color: color_primary_blue
-                        selection_color: color_primary_green
-                        padding: [dp(20), dp(15)]
-                        on_text_validate: app.game_manager.submit_score(self.text)
+                        height: self.texture_size[1]
+                        halign: 'center'
+                        valign: 'middle'
+                        text_size: self.width, None
+    
+                    # Name input section with proper label
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(10)
+                        size_hint_y: None
+                        height: dp(120)
+    
+                        BrandedLabel:
+                            text: 'Digite seu nome:'
+                            font_size: '35sp'
+                            size_hint_y: None
+                            height: dp(40)
+                            halign: 'center'
+                            valign: 'middle'
+                            text_size: self.width, None
+    
+                        TextInput:
+                            id: name_input
+                            hint_text: 'SEU NOME'
+                            font_name: 'Roboto'
+                            font_size: '40sp'
+                            multiline: False
+                            readonly: False
+                            halign: 'center'
+                            size_hint_y: None
+                            height: dp(70)
+                            background_color: color_white
+                            foreground_color: color_primary_blue
+                            cursor_color: color_primary_blue
+                            selection_color: color_primary_green
+                            padding: [dp(20), dp(15)]
+                            on_text_validate: app.game_manager.submit_score(self.text)
+                            # Remove virtual_keyboard reference as our custom keyboard doesn't need a target
 
         # --- SUBMIT BUTTON (15% of vertical space) ---
         BoxLayout:
             size_hint_y: 0.15
-            padding: [dp(100), 0]
+            padding: [dp(50), 0]
             
             BrandedButton:
-                text: 'ENVIAR PONTUAÇÃO'
+                text: 'ENVIAR'
+                font_size: '50sp'
                 size_hint: 1, 1
                 on_press: app.game_manager.submit_score(name_input.text)
 
         # --- VIRTUAL KEYBOARD (35% of vertical space) ---
         BoxLayout:
             size_hint_y: 0.35
-            padding: [dp(20), 0]
+            padding: [dp(10), 0]
             
-            VKeyboard:
-                id: virtual_keyboard
-                target: name_input
-                layout: 'qwerty'
-                do_translation: False
-                pos_hint: {'center_x': 0.5}
+            # FIXED: Custom keyboard implementation
+            GridLayout:
+                id: custom_keyboard
+                cols: 10
+                spacing: dp(5)
                 size_hint: 1, 1
+                
+                # First row: Q W E R T Y U I O P
+                Button:
+                    text: 'Q'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'W'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'E'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'R'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'T'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'Y'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'U'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'I'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'O'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'P'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                    
+                # Second row: A S D F G H J K L DEL
+                Button:
+                    text: 'A'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'S'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'D'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'F'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'G'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'H'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'J'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'K'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'L'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: '⌫'
+                    font_size: '30sp'
+                    background_color: (0.8, 0.3, 0.3, 1)
+                    on_press: name_input.do_backspace()
+                    
+                # Third row: Z X C V B N M SPACE
+                Button:
+                    text: 'Z'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'X'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'C'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'V'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'B'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'N'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'M'
+                    font_size: '30sp'
+                    on_press: name_input.insert_text(self.text)
+                Button:
+                    text: 'ESPAÇO'
+                    font_size: '20sp'
+                    size_hint_x: 3
+                    on_press: name_input.insert_text(' ')
 
 <LeaderboardScreen>:
     name: 'leaderboard'
