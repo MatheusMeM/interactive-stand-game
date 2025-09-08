@@ -162,8 +162,21 @@ class GameManager:
              self.end_game()
              return
 
+        # Reset quiz state completely
+        self.current_quiz_round = 0
+        self.quiz_in_progress = False
+        
         self.go_to_screen('quiz_game')
         self.questions_for_round = random.sample(self.all_questions, self.total_quiz_rounds)
+        
+        # Reset all quiz buttons to default state before starting
+        screen = self.sm.get_screen('quiz_game')
+        answer_buttons = [screen.ids.option_a, screen.ids.option_b, screen.ids.option_c, screen.ids.option_d]
+        for button in answer_buttons:
+            button.disabled = False
+            button.button_bg_color = (216/255, 206/255, 205/255, 1)  # Default light gray
+            button.text = ""
+        
         Clock.schedule_once(self.start_quiz_round, 0.5)
 
     def start_quiz_round(self, dt=None):
@@ -344,4 +357,23 @@ class GameManager:
         self.score = 0
         self.current_agility_round = 0
         self.current_quiz_round = 0
+        
+        # Reset countdown flag to allow countdown on next play
+        self.countdown_active = False
+        
+        # Reset instruction state
+        self.instruction_state = None
+        
+        # Reset quiz and agility states
+        self.quiz_in_progress = False
+        self.agility_in_progress = False
+        
+        # Cancel any active chronometer
+        if self.chronometer_event:
+            self.chronometer_event.cancel()
+            self.chronometer_event = None
+            
+        # Turn off all LEDs
+        self.hw.turn_off_all_leds()
+        
         self.go_to_screen('welcome')
