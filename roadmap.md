@@ -36,15 +36,16 @@
     - [x] Display and highlight the player's score on the `LeaderboardScreen`.
 
 ### Phase 4: UI/UX Overhaul & Polishing
-- [ ] **Foundational UI Setup:**
-    - [ ] Configure the application to run in **Fullscreen Mode**.
-    - [ ] Set and lock the screen orientation to **Vertical**.
+- [x] **Foundational UI Setup:**
+    - [x] Configure the application to run in **Fullscreen Mode**.
+    - [x] Set and lock the screen orientation to **Vertical**.
 - [ ] **Brand Integration & UI Redesign:**
-    - [ ] Integrate brand assets (logo, graphics) into the `assets/images` folder.
+    - [x] Integrate brand assets (logo, graphics) into the `assets/images` folder.
     - [ ] Redesign all screens in `screens.kv` using the IBP brand guide (colors, shapes, and recommended fonts).
-    - [ ] Replace the standard `TextInput` on the `ScoreScreen` with a **built-in Kivy Virtual Keyboard**.
+    - [ ] Replace the standard `TextInput` on the `ScoreScreen` with a **built-in Kivy Virtual Keyboard**, that is fixed on the screen and cannot move around, and its not the default system keyboard, it must be made in game, also i want to be able to input with or standart textinput, so a keyboard laso inputs text into the field. Ps. Field can be up to 40 chars total (including spaces)
 - [ ] **Experience Refinement:**
     - [x] **Sensory Feedback:** Integrate sound effects for key events.
+    - [ ] **Audio Adjust:** Refine and polish audio trigger events nad sync with text for countdown screen.
     - [ ] **UI Polish:** Implement smooth, non-disruptive screen transitions (e.g., `FadeTransition`).
     - [ ] **Attract Mode:** Implement an idle state loop on the `WelcomeScreen` that alternates with the Leaderboard and triggers an engaging LED light pattern.
 - [ ] **Final Loop Integration & Testing:**
