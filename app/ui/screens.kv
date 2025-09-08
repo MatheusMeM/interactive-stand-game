@@ -9,7 +9,7 @@
 #:set color_white (1, 1, 1, 1)
 #:set color_dark_gray (137/255, 137/255, 137/255, 1) # rgba(137, 137, 137, 1)
 #:set color_light_gray (216/255, 206/255, 205/255, 1) # rgba(216, 206, 205, 1)
-#:set screen_padding dp(60)
+#:set screen_padding dp(120)
 
 # Base styles for widgets to maintain consistency
 <BrandedButton@Button>:
@@ -81,15 +81,18 @@
         orientation: 'vertical'
         padding: screen_padding
         spacing: dp(25)
-        Image:
-            source: 'assets/images/ibp_logo.png'
-            size_hint: 1, 0.2
-            allow_stretch: True
-            keep_ratio: True
+
+
+        BoxLayout:
+            size_hint_y: 0.2
+            orientation: 'vertical'
+            spacing: dp(60)
+
+
         # --- TOP 5/8: The Dialog Box ---
         BoxLayout:
-            size_hint_y: 0.625 # This is 5/8
-            padding: dp(30)
+            size_hint_y: 0.4 # This is 5/8
+            padding: dp(60)
             canvas.before:
                 Color:
                     rgba: color_light_gray
@@ -102,36 +105,51 @@
                 spacing: dp(15)
                 
                 BrandedLabel:
-                    id: title_label # <-- The missing ID
+                    id: title_label
                     text: 'Placeholder Title'
-                    font_size: '40sp'
+                    font_size: '60sp'
                     bold: True
                     size_hint_y: None
                     height: self.texture_size[1] # Make height fit the text
-                    halign: 'left'
+                    halign: 'center'
 
                 BrandedLabel:
                     id: body_label
                     text: 'Placeholder Body Text'
                     markup: True
-                    font_size: '32sp'
+                    font_size: '40sp'
                     text_size: self.width, None
                     valign: 'top'
                     halign: 'left'
+                    padding: [dp(50)]
 
         # --- BOTTOM 3/8: The Start Button and Logo ---
         BoxLayout:
-            size_hint_y: 0.375 # This is 3/8
+            size_hint_y: 0.2 # This is 3/8
             orientation: 'vertical'
-            spacing: dp(20)
+            spacing: dp(60)
             
             BrandedButton:
                 id: action_button # <-- NEW ID
-                text: 'PLACEHOLDER' # Will be replaced by GameManager
+                text: 'PLACEHOLDER'
                 size_hint: 1, 0.7
-                # --- CHANGED: A new generic callback ---
                 on_press: app.game_manager.proceed_from_instructions()
-            
+       
+        BoxLayout:
+            size_hint_y: 0.1
+            orientation: 'vertical'
+            spacing: dp(0)
+
+        BoxLayout:
+            size_hint_y: 0.1
+            orientation: 'vertical'
+            spacing: dp(0)
+           
+            Image:
+                source: 'assets/images/ibp_logo_simples.png'
+                size_hint: 1, 0.2
+                allow_stretch: True
+                keep_ratio: True
 
 
 

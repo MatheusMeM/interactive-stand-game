@@ -125,8 +125,8 @@ class GameManager:
         self.instruction_state = 'quiz'
         screen = self.sm.get_screen('instructions')
         screen.update_content(
-            title='[b]Como Jogar: Quiz[/b]',
-            body='Agora, teste seu conhecimento! Responda as perguntas na tela para somar mais pontos.',
+            title='Como Jogar: Quiz',
+            body='\n\n• Uma pergunta sobre o IBP aparecerá no centro da tela.\n\n• Quatro opções de resposta serão exibidas logo abaixo.\n\n• Toque na resposta que você considera correta para acumular pontos.\n\n',
             button_text='COMEÇAR QUIZ'
         )
         self.go_to_screen('instructions')
@@ -240,8 +240,8 @@ class GameManager:
         self.instruction_state = 'agility'
         screen = self.sm.get_screen('instructions')
         screen.update_content(
-            title='[b]Como Jogar: Agilidade[/b]',
-            body='Pressione o botão físico que acender o mais rápido que puder para marcar mais pontos!',
+            title='Como Jogar: Agilidade',
+            body='\n\n• Observe o painel de botões. \n\n • Quando uma luz acender, pressione o botão correspondente imediatamente. \n\n • Após o acerto, a luz se apaga e um novo botão acenderá, iniciando a próxima rodada.\n',
             button_text='COMEÇAR AGILIDADE'
         )
         self.go_to_screen('instructions')
