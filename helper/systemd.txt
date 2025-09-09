@@ -1,0 +1,34 @@
+# /etc/systemd/system/interactive-game.service
+# Systemd service file to run the Interactive Stand Game on boot
+
+[Unit]
+Description=Interactive Stand Game Service
+# Garante que o serviço só inicie depois que a interface gráfica estiver pronta
+After=graphical.target
+
+[Service]
+# Usuário que irá rodar o script (importante para permissões)
+User=mnds
+Group=mnds
+
+# O diretório de trabalho do projeto (onde o script será executado)
+# SUBSTITUA PELO SEU CAMINHO DO PASSO 0.1
+WorkingDirectory=/home/mnds/Desktop/interactive-stand-game
+
+# O comando exato para iniciar a aplicação
+# SUBSTITUA O CAMINHO DO PYTHON PELO SEU DO PASSO 0.2
+ExecStart=/home/mnds/Desktop/interactive-stand-game/.venv/bin/python -m app
+
+# --- Configuração de Reinicialização Automática ---
+# Reinicia o serviço se ele sair com um código de erro (ou seja, um crash)
+Restart=on-failure
+# Espera 5 segundos antes de tentar reiniciar
+RestartSec=5
+
+# --- Configuração de Ambiente para Aplicações Gráficas ---
+# Informa à aplicação qual display usar. Essencial para o Kivy funcionar.
+Environment="DISPLAY=:0"
+
+[Install]
+# "Linka" este serviço ao alvo da interface gráfica, para que ele inicie no boot
+WantedBy=graphical.target
